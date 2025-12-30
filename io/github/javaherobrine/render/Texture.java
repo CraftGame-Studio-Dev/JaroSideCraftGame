@@ -124,6 +124,7 @@ public class Texture {
 		try {
 			text=new Texture(in);
 		} catch (Exception e) {
+			System.err.println("[ERROR] Invalid Texture");
 			text=Constant.INVALID_TEXTURE_HARD_CODING;
 		}
 		return text;
@@ -133,6 +134,7 @@ public class Texture {
 		try {
 			text=new Texture(data);
 		}catch(Exception e) {
+			System.err.println("[ERROR] Invalid Texture");
 			text=Constant.INVALID_TEXTURE_HARD_CODING;
 		}
 		return text;

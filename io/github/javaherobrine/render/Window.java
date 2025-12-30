@@ -24,7 +24,6 @@ public class Window implements LifeCycle {
 		glfwSetWindowSizeCallback(window, (win, width, height) -> {
 			glViewport(0, 0, width, height);
 		});
-		glfwSetCursor(window, 0);
 		glfwMakeContextCurrent(window);
 		glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
 		GL.createCapabilities();

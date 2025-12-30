@@ -23,6 +23,8 @@ JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_supportsNIOAccess
 	if(env->GetDirectBufferAddress(direct)){
 		func=getAddress;
 	}else{
+		fprintf(stderr,"%s\n","[WARNING] Performance Decreased: Access to the address of direct buffers is unreachable");
+		fflush(stderr);
 		GetAddressByReflection reflect;
 		jclass clazz=env->FindClass("java/nio/Buffer");
 		reflect.address=env->GetFieldID(clazz,"address","J");

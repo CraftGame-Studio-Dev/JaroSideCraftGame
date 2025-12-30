@@ -108,13 +108,13 @@ public final class GameUtils {
 	 * Manipulate the memory directly to increase the performance
 	 * It will block GC
 	 */
-	public static native long address(byte[] b);
+	public static native @NativeType("void*")long address(byte[] b);
 	/**
 	 * Tell JVM that the memory can be freed
 	 */
 	public static native void allowGC(@NativeType("void*") long addr,byte[] b);
 	private static native void supportsNIOAccess(ByteBuffer buf);
 	public static native void to3x3(FloatBuffer buf);
-	public static native long pointerOfPointer(long[] pointer);
+	public static native @NativeType("void**") long pointerOfPointer(@NativeType("void**")long[] pointer);
 	public static native void freePointerOfPointer(long addr,long[] pointer);
 }
