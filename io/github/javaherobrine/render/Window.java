@@ -2,7 +2,9 @@ package io.github.javaherobrine.render;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL45.*;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryUtil;
 import xueli.game2.lifecycle.*;
+import xueli.utils.exception.*;
 import java.util.*;
 import java.util.function.*;
 import org.joml.Math;
@@ -13,6 +15,12 @@ public class Window implements LifeCycle {
 	public final ArrayList<KeyBinding> bindings = new ArrayList<>();
 	public boolean paused=false;
 	public Window() {
+		glfwSetErrorCallback((errorID,pointer)->{
+			try {
+				new CrashReport("GLFW Error, code="+errorID,new Error(MemoryUtil.memUTF8Safe(pointer))).showCrashReport().join();
+			} catch (InterruptedException e) {}
+			System.exit(errorID);
+		});
 		glfwInit();
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);

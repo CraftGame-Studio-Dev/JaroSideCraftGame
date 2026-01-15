@@ -11,11 +11,13 @@ public class CrashReport {
 		this.e = e;
 		this.state = state;
 	}
-	public void showCrashReport() {
-		new Thread(() -> {
+	public Thread showCrashReport() {
+		Thread t=new Thread(() -> {
 			e.printStackTrace();
 			this.showErrorDialog(getNiceComment(), getMessage());
-		}).start();
+		});
+		t.start();
+		return t;
 	}
 	private void showErrorDialog(String title, String message) {
 		JFrame frame = new JFrame();

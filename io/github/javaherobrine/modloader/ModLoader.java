@@ -48,12 +48,9 @@ public class ModLoader {
 	}
 	public static void crash(final String msg) {
 		System.err.println("[FATAL] the game must terminate because " + msg);
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				new CrashReport(msg, new Error()).showCrashReport();
-			}
-		});
+		try {
+			new CrashReport(msg, new Error()).showCrashReport().join();
+		} catch (InterruptedException e) {}
 		System.exit(1);
 	}
 }
