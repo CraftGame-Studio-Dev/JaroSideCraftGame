@@ -15,6 +15,9 @@ public class Renderer implements RunnableLifeCycle {
 	private long frame = -1;
 	private Shader shader;
 	private Shader sky;
+	private FloatBuffer model=MemoryUtil.memAllocFloat(16);
+	private FloatBuffer projection=MemoryUtil.memAllocFloat(16);
+	private FloatBuffer lookAt=MemoryUtil.memAllocFloat(16);
 	private Texture skyTexture=Texture.sky();
 	private VAO skyVAO=VAO.skyVAO();
 	private Texture[] loaded= {
@@ -22,7 +25,6 @@ public class Renderer implements RunnableLifeCycle {
 			Texture.create(Files.getResourcePackedInJarStream("/textures/grassblock.png")),
 			Constant.INVALID_TEXTURE_HARD_CODING};
 	private VAO vao;
-	private Matrix4f f=MatrixHelper.perspective(1920, 1080, 90,0.1f,100);
 	public Renderer(Window window) {
 		win = window;
 		vao=VAO.blockVAO(new Vector2f(0,1), new Vector2f(0,0),new Vector2f(1,1), new Vector2f(1,0),GL_STATIC_DRAW);
@@ -31,7 +33,6 @@ public class Renderer implements RunnableLifeCycle {
 	}
 	@Override
 	public void init() {
-		System.err.println(f);
 		try {
 			shader = new Shader(Files.getResourcePackedInJarStream("/shaders/block/vertex.vs").readAllBytes(),
 					Files.getResourcePackedInJarStream("/shaders/block/fragment.fs").readAllBytes());
@@ -62,8 +63,8 @@ public class Renderer implements RunnableLifeCycle {
 		vao.bind();
 		vao.attribute(0, 3);
 		vao.attribute(1, 2, 3);
-		shader.uniform(1,win.camera.lookAt());
-		shader.uniform(2, f);
+		shader.uniform(1,win.camera.lookAt(),lookAt);
+		shader.uniform(2, win.projection);
 		for(int i=0;i<3;++i) {
 			shader.exec();
 			loaded[i].activate(0);
@@ -77,17 +78,17 @@ public class Renderer implements RunnableLifeCycle {
 		skyVAO.bind();
 		skyVAO.attribute(0,3);
 		sky.uniform(0,new Matrix4f());
-		FloatBuffer buffer = MemoryUtil.memAllocFloat(16);
-		win.camera.lookAt().get(buffer);
-		GameUtils.to3x3(buffer);
-		glUniformMatrix4fv(1, false, buffer);
-		MemoryUtil.memFree(buffer);
-		sky.uniform(2,f);
+		GameUtils.to3x3(lookAt);
+		glUniformMatrix4fv(1, false, lookAt);
+		sky.uniform(2,win.projection,projection);
 		glUniform1i(3, 0);
 		skyTexture.activate(0);
 		skyVAO.apply();
 		// process events and swap buffers
 		win.tick();
+		model.rewind();
+		projection.rewind();
+		lookAt.rewind();
 	}
 	@Override
 	public void release() {

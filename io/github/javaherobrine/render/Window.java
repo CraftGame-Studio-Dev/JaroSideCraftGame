@@ -3,16 +3,21 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL45.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
+import io.github.javaherobrine.math.*;
+import io.github.javaherobrine.render.input.*;
 import xueli.game2.lifecycle.*;
 import xueli.utils.exception.*;
-import java.util.*;
 import java.util.function.*;
 import org.joml.Math;
+import org.joml.*;
 public class Window implements LifeCycle {
 	public final long window;
+	public float fov=90;
+	public int width=1920,height=1080;
 	private double lPosX[]=new double[1],lPosY[]=new double[1],cPosX[]=new double[1],cPosY[]=new double[1];
 	public Camera camera=new Camera();
-	public final ArrayList<KeyBinding> bindings = new ArrayList<>();
+	Matrix4f projection=MatrixHelper.perspective(1920, 1080, 90,0.1f,1000);
+	public InputBindings bindings;
 	public boolean paused=false;
 	public Window() {
 		glfwSetErrorCallback((errorID,pointer)->{
@@ -30,27 +35,80 @@ public class Window implements LifeCycle {
 		window = glfwCreateWindow(1920, 1080, "CraftGame", 0, 0);
 		System.err.println(window);
 		glfwSetWindowSizeCallback(window, (win, width, height) -> {
+			this.width=width;
+			this.height=height;
 			glViewport(0, 0, width, height);
+			projection=MatrixHelper.perspective(width, height, fov,0.1f,1000);
 		});
 		glfwMakeContextCurrent(window);
 		glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
 		GL.createCapabilities();
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
-		bindings.add(new KeyBinding(GLFW_KEY_W,-1,true,"",l->camera.moveForward(-l*Camera.speed)));
-		bindings.add(new KeyBinding(GLFW_KEY_S,-1,true,"",l->camera.moveBackward(-l*Camera.speed)));
-		bindings.add(new KeyBinding(GLFW_KEY_A,-1,true,"",l->camera.moveLeft(-l*Camera.speed)));
-		bindings.add(new KeyBinding(GLFW_KEY_D,-1,true,"",l->camera.moveRight(-l*Camera.speed)));
-		bindings.add(new KeyBinding(GLFW_KEY_SPACE,-1,true,"",l->camera.y+=Camera.speed*l));
-		bindings.add(new KeyBinding(GLFW_KEY_LEFT_SHIFT,-1,true,"",l->camera.y-=Camera.speed*l));
-		bindings.add(new KeyBinding(GLFW_KEY_ESCAPE,-1,true,"",new LongConsumer() {
+		InputBindings game=new InputBindings();
+		InputBindings pause=new InputBindings();
+		game.add(new KeyBinding(GLFW_KEY_W,-1,false,"",l->camera.moveForward(-l*Camera.speed)));
+		game.add(new KeyBinding(GLFW_KEY_S,-1,false,"",l->camera.moveBackward(-l*Camera.speed)));
+		game.add(new KeyBinding(GLFW_KEY_A,-1,false,"",l->camera.moveLeft(-l*Camera.speed)));
+		game.add(new KeyBinding(GLFW_KEY_D,-1,false,"",l->camera.moveRight(-l*Camera.speed)));
+		game.add(new KeyBinding(GLFW_KEY_SPACE,-1,false,"",l->camera.y+=Camera.speed*l));
+		game.add(new KeyBinding(GLFW_KEY_LEFT_SHIFT,-1,false,"",l->camera.y-=Camera.speed*l));
+		game.add(new KeyBinding(GLFW_KEY_ESCAPE,-1,true,"",new LongConsumer() {
 			@Override
 			public void accept(long value) {
-				if(paused) {
-					paused=true;
-				}
+				paused=true;
+				bindings=pause;
+				glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_NORMAL);
+				glfwGetCursorPos(window, lPosX, lPosY);
+				glfwGetCursorPos(window, cPosX, cPosY);
 			}
 		}));
+		game.add(new KeyBinding(GLFW_KEY_UP,-1,false,"",l->{
+			fov-=l*0.01;
+			if(fov<30) {
+				fov=30;
+			}
+			projection=MatrixHelper.perspective(width, height, fov,0.1f,1000);
+		}));
+		game.add(new KeyBinding(GLFW_KEY_DOWN,-1,false,"",l->{
+			fov+=l*0.01;
+			if(fov>120) {
+				fov=120;
+			}
+			projection=MatrixHelper.perspective(width, height, fov,0.1f,1000);
+		}));
+		game.mouse=()->{
+			glfwSetWindowTitle(window,"CraftGame Position="+"("+(long)camera.x+","+(long)camera.y+","+(long)camera.z+")");
+			glfwGetCursorPos(window, cPosX, cPosY);
+			camera.pitch+=Camera.omega*Camera.pitchDirection*(cPosY[0]-lPosY[0]);
+			camera.yaw+=Camera.omega*Camera.yawDirection*(cPosX[0]-lPosX[0]);
+			lPosY[0]=cPosY[0];
+			lPosX[0]=cPosX[0];
+			if(camera.pitch>Math.PI_OVER_2_f) {
+				camera.pitch=Math.PI_OVER_2_f;
+			}else if(camera.pitch<-Math.PI_OVER_2_f) {
+				camera.pitch=-Math.PI_OVER_2_f;
+			}
+			while(camera.yaw<0) {
+				camera.yaw+=Math.PI_TIMES_2_f;
+			}
+			while(camera.yaw>=Math.PI_TIMES_2_f) {
+				camera.yaw-=Math.PI_TIMES_2_f;
+			}
+		};
+		pause.add(new KeyBinding(GLFW_KEY_ESCAPE,-1,true,"",new LongConsumer() {
+			@Override
+			public void accept(long value) {
+				paused=false;
+				bindings=game;
+				glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
+			}
+		}));
+		pause.mouse=()->{
+			glfwGetCursorPos(window, lPosX, lPosY);
+			glfwGetCursorPos(window, cPosX, cPosY);
+		};
+		bindings=game;
 	}
 	@Override
 	public void init() {
@@ -67,29 +125,7 @@ public class Window implements LifeCycle {
 		glfwTerminate();
 	}
 	public void input(long delta) {
-		Iterator<KeyBinding> iter = bindings.iterator();
-		while (iter.hasNext()) {
-			KeyBinding binding = iter.next();
-			if (glfwGetKey(window, binding.key()) == (binding.click() ? GLFW_PRESS : GLFW_RELEASE)) {
-				binding.callback().accept(delta);
-			}
-		}
-		glfwSetWindowTitle(window,"CraftGame Position="+"("+(long)camera.x+","+(long)camera.y+","+(long)camera.z+")");
-		glfwGetCursorPos(window, cPosX, cPosY);
-		camera.pitch+=Camera.omega*Camera.pitchDirection*(cPosY[0]-lPosY[0]);
-		camera.yaw+=Camera.omega*Camera.yawDirection*(cPosX[0]-lPosX[0]);
-		lPosY[0]=cPosY[0];
-		lPosX[0]=cPosX[0];
-		if(camera.pitch>Math.PI_OVER_2_f) {
-			camera.pitch=Math.PI_OVER_2_f;
-		}else if(camera.pitch<-Math.PI_OVER_2_f) {
-			camera.pitch=-Math.PI_OVER_2_f;
-		}
-		while(camera.yaw<0) {
-			camera.yaw+=Math.PI_TIMES_2_f;
-		}
-		while(camera.yaw>=Math.PI_TIMES_2_f) {
-			camera.yaw-=Math.PI_TIMES_2_f;
-		}
+		InputBindings bindings=this.bindings;
+		bindings.input(window, delta);
 	}
 }
