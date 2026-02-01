@@ -13,12 +13,12 @@ import org.joml.*;
 public class Window implements LifeCycle {
 	public final long window;
 	public float fov=90;
-	public int width=1920,height=1080;
+	public int width=800,height=600;
 	private double lPosX[]=new double[1],lPosY[]=new double[1],cPosX[]=new double[1],cPosY[]=new double[1];
 	public Camera camera=new Camera();
-	Matrix4f projection=MatrixHelper.perspective(1920, 1080, 90,0.1f,1000);
+	Matrix4f projection=MatrixHelper.perspective(800, 600, 90,0.1f,1000);
 	public InputBindings bindings;
-	public boolean paused=false;
+	public boolean paused=false,fullscreen=false;
 	public Window() {
 		glfwSetErrorCallback((errorID,pointer)->{
 			try {
@@ -27,12 +27,14 @@ public class Window implements LifeCycle {
 			System.exit(errorID);
 		});
 		glfwInit();
+		long monitor=glfwGetPrimaryMonitor();
+		var video=glfwGetVideoMode(monitor);
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-		window = glfwCreateWindow(1920, 1080, "CraftGame", 0, 0);
+		window = glfwCreateWindow(800, 600, "CraftGame", 0, 0);
 		System.err.println(window);
 		glfwSetWindowSizeCallback(window, (win, width, height) -> {
 			this.width=width;
@@ -47,6 +49,24 @@ public class Window implements LifeCycle {
 		glDepthFunc(GL_LEQUAL);
 		InputBindings game=new InputBindings();
 		InputBindings pause=new InputBindings();
+		LongConsumer fullScreen=new LongConsumer() {
+			@Override
+			public void accept(long value) {
+				if(fullscreen) {
+					fullscreen=false;
+					width=800;
+					height=600;
+					glfwSetWindowMonitor(window,0,0,0,width,height,0);
+				}else {
+					fullscreen=true;
+					width=video.width();
+					height=video.height();
+					glfwSetWindowMonitor(window, monitor,0,0,width,height,video.refreshRate());
+				}
+				glfwGetCursorPos(window, lPosX, lPosY);
+				glfwGetCursorPos(window, cPosX, cPosY);
+			}
+		};
 		game.add(new KeyBinding(GLFW_KEY_W,-1,false,"",l->camera.moveForward(-l*Camera.speed)));
 		game.add(new KeyBinding(GLFW_KEY_S,-1,false,"",l->camera.moveBackward(-l*Camera.speed)));
 		game.add(new KeyBinding(GLFW_KEY_A,-1,false,"",l->camera.moveLeft(-l*Camera.speed)));
@@ -63,6 +83,7 @@ public class Window implements LifeCycle {
 				glfwGetCursorPos(window, cPosX, cPosY);
 			}
 		}));
+		game.add(new KeyBinding(GLFW_KEY_F11,-1,true,"",fullScreen));
 		game.add(new KeyBinding(GLFW_KEY_UP,-1,false,"",l->{
 			fov-=l*0.01;
 			if(fov<30) {
@@ -108,11 +129,12 @@ public class Window implements LifeCycle {
 			glfwGetCursorPos(window, lPosX, lPosY);
 			glfwGetCursorPos(window, cPosX, cPosY);
 		};
+		pause.add(new KeyBinding(GLFW_KEY_F11,-1,true,"",fullScreen));
 		bindings=game;
 	}
 	@Override
 	public void init() {
-		glViewport(0, 0, 1920, 1080);
+		glViewport(0, 0, 800, 600);
 	}
 	@Override
 	public void tick() {

@@ -1,6 +1,6 @@
 /**
  * code from Java_Herobrine is put in io.github.javaherobrine.(*) <br />
- * Copyright (C) <2019-2025> <Java_Herobrine>
+ * Copyright (C) <2019-2026> <Java_Herobrine>
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free

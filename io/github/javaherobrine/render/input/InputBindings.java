@@ -5,7 +5,7 @@ import java.util.*;
 public class InputBindings {
 	public ArrayList<KeyBinding> bindings=new ArrayList<>();
 	public Runnable mouse=()->{};
-	private static HashMap<Integer, Boolean> prev=new HashMap<>();
+	private static final HashMap<Integer, Boolean> prev=new HashMap<>();
 	public void add(KeyBinding bind) {
 		prev.put(bind.key(), false);
 		bindings.add(bind);

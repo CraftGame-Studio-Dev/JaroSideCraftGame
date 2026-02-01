@@ -4,7 +4,7 @@
  * Java_Herobrine <br />
  * I'll place an annotation in case of addition or modification, to mark them
  * <br />
- * Copyright (C) <2019-2025> <LovelyZeeiam>
+ * Copyright (C) <2019-2026> <LovelyZeeiam>
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,8 +33,8 @@
  * information on this, and how to apply and follow the GNU AGPL, see
  * <https://www.gnu.org/licenses/>.
  * 
- * @see <a href="https://github.com/LovelyZeeiam/CraftGame"> LovelyZeeiam's
- *      repository </a>
+ * @see <del><a href="https://github.com/LovelyZeeiam/CraftGame"> LovelyZeeiam's
+ *      repository </a></del>
  * @see <a href="https://github.com/javaherobrine/craftgame_from_lovelyzeeiam">
  *      My fork and modifications </a>
  * @see <a href="https://www.lwjgl.org/">LWJGL</a>
