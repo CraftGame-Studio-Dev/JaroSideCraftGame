@@ -13,10 +13,10 @@ import org.joml.*;
 public class Window implements LifeCycle {
 	public final long window;
 	public float fov=90;
-	public int width=800,height=600;
+	public int width,height;
 	private double lPosX[]=new double[1],lPosY[]=new double[1],cPosX[]=new double[1],cPosY[]=new double[1];
 	public Camera camera=new Camera();
-	Matrix4f projection=MatrixHelper.perspective(800, 600, 90,0.1f,1000);
+	Matrix4f projection;
 	public InputBindings bindings;
 	public boolean paused=false,fullscreen=false;
 	public Window() {
@@ -29,18 +29,24 @@ public class Window implements LifeCycle {
 		glfwInit();
 		long monitor=glfwGetPrimaryMonitor();
 		var video=glfwGetVideoMode(monitor);
+		int monitorWidth=video.width(),monitorHeight=video.height();
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-		window = glfwCreateWindow(800, 600, "CraftGame", 0, 0);
+		glfwWindowHint(GLFW_POSITION_X, monitorWidth>>2);
+		glfwWindowHint(GLFW_POSITION_Y, monitorHeight>>2);
+		window = glfwCreateWindow(monitorWidth>>1,monitorHeight>>1, "CraftGame", 0, 0);
+		projection=MatrixHelper.perspective(monitorWidth>>1,monitorHeight>>1,90,0.1f,1000);
 		System.err.println(window);
+		width=monitorWidth>>1;
+		height=monitorHeight>>1;
 		glfwSetWindowSizeCallback(window, (win, width, height) -> {
 			this.width=width;
 			this.height=height;
 			glViewport(0, 0, width, height);
-			projection=MatrixHelper.perspective(width, height, fov,0.1f,1000);
+			projection=MatrixHelper.perspective(width, height, fov, 0.1f, 1000);
 		});
 		glfwMakeContextCurrent(window);
 		glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
@@ -54,9 +60,9 @@ public class Window implements LifeCycle {
 			public void accept(long value) {
 				if(fullscreen) {
 					fullscreen=false;
-					width=800;
-					height=600;
-					glfwSetWindowMonitor(window,0,0,0,width,height,0);
+					width=monitorWidth>>1;
+					height=monitorHeight>>1;
+					glfwSetWindowMonitor(window,0,monitorWidth>>2,monitorHeight>>2,width,height,0);
 				}else {
 					fullscreen=true;
 					width=video.width();
@@ -134,7 +140,7 @@ public class Window implements LifeCycle {
 	}
 	@Override
 	public void init() {
-		glViewport(0, 0, 800, 600);
+		glViewport(0, 0, width, height);
 	}
 	@Override
 	public void tick() {

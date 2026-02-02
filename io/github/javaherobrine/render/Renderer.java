@@ -27,7 +27,7 @@ public class Renderer implements RunnableLifeCycle {
 	private VAO vao;
 	public Renderer(Window window) {
 		win = window;
-		vao=VAO.blockVAO(new Vector2f(0,1), new Vector2f(0,0),new Vector2f(1,1), new Vector2f(1,0),GL_STATIC_DRAW);
+		vao=VAO.blockVAO(VAO.NO_ATLAS_COORDINATE,GL_STATIC_DRAW);
 		vao.bindVBO(GL_STATIC_DRAW);
 		skyVAO.bindVBO(GL_STATIC_DRAW);
 	}
@@ -61,8 +61,7 @@ public class Renderer implements RunnableLifeCycle {
 		Constant.INVALID_TEXTURE_HARD_CODING.activate(0);
 		shader.exec();
 		vao.bind();
-		vao.attribute(0, 3);
-		vao.attribute(1, 2, 3);
+		vao.attribute(0, 3).attribute(1,2,3).attribute(2,3,5);
 		shader.uniform(1,win.camera.lookAt(),lookAt);
 		shader.uniform(2, win.projection);
 		for(int i=0;i<3;++i) {
@@ -74,6 +73,7 @@ public class Renderer implements RunnableLifeCycle {
 				vao.apply();
 			}
 		}
+		shader.uniform(5,0.2f,0.05f,0.2f);
 		sky.exec();
 		skyVAO.bind();
 		skyVAO.attribute(0,3);

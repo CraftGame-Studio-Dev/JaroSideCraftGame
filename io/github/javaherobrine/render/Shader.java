@@ -71,6 +71,9 @@ public class Shader {
 		glUniformMatrix4fv(location, false, mat.get(buffer));
 		MemoryUtil.memFree(buffer);
 	}
+	public void uniform(int location, float a,float b,float c) {
+		glUniform3f(location,a,b,c);
+	}
 	public void uniform(int location, Matrix4f mat,FloatBuffer buffer) {
 		// System.out.println(mat);
 		glUniformMatrix4fv(location, false, mat.get(buffer));

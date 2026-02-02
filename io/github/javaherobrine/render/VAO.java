@@ -1,10 +1,8 @@
 package io.github.javaherobrine.render;
 import static org.lwjgl.opengl.GL45.*;
-import org.joml.*;
 import io.github.javaherobrine.*;
-import java.nio.*;
-import org.lwjgl.system.*;
 public class VAO {// compact data
+	public static final float[] NO_ATLAS_COORDINATE=new float[] {0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,1};
 	public final float[] data;
 	public final int size;
 	private final int VAO;
@@ -49,13 +47,15 @@ public class VAO {// compact data
 		elements = indices.length;
 		return IBO;
 	}
-	public void attribute(int location, int size) {
+	public VAO attribute(int location, int size) {
 		glVertexAttribPointer(location, size, GL_FLOAT, false, this.size << 2, 0);
 		glEnableVertexAttribArray(location);
+		return this;
 	}
-	public void attribute(int location, int size, long offset) {
+	public VAO attribute(int location, int size, long offset) {
 		glVertexAttribPointer(location, size, GL_FLOAT, false, this.size << 2, offset << 2);
 		glEnableVertexAttribArray(location);
+		return this;
 	}
 	public void apply() {
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -74,38 +74,94 @@ public class VAO {// compact data
 	/**
 	 * Create a VAO of a block with 6 same planes
 	 */
-	public static VAO blockVAO(Vector2f LU,Vector2f LD,Vector2f RU,Vector2f RD,int mode) {
+//	public static VAO blockVAO(Vector2f LU,Vector2f LD,Vector2f RU,Vector2f RD,int mode) {
+//		VAO vao=new VAO(new float[] {
+//                0, 0, 0,  LD.x, LD.y,
+//                1, 0, 0,  RD.x, RD.y,
+//                1, 1, 0,  RU.x, RU.y,
+//                0, 1, 0,  LU.x, LU.y,
+//                0, 0, 1,  LD.x, LD.y,
+//                1, 0, 1,  RD.x, RD.y,
+//                1, 1, 1,  RU.x, RU.y,
+//                0, 1, 1,  LU.x, LU.y,
+//                0, 1, 1,  RD.x, RD.y,
+//                0, 1, 0,  RU.x, RU.y,
+//                0, 0, 0,  LU.x, LU.y,
+//                1, 1, 1,  RD.x, RD.y,
+//                1, 0, 0,  LU.x, LU.y,
+//                1, 0, 1,  LD.x, LD.y,
+//                1, 0, 0,  RU.x, RU.y,
+//                0, 1, 1,  LD.x, LD.y,
+//   },5);
+//		vao.bindIBO(new byte[] {
+//				0,1,2,
+//				2,3,0,
+//				4,5,6,
+//				6,7,4,
+//				8,9,10,
+//				10,4,8,
+//				11,2,12,
+//				12,13,11,
+//				10,14,5,
+//				5,4,10,
+//				3,2,11,
+//				11,15,3,
+//		}, mode);
+//		return vao;
+//	}
+	/**
+	 * texture coordinates order:
+	 * up left x
+	 * up left y
+	 * down right x
+	 * down right y
+	 * (in all faces)
+	 * face order:
+	 * up down left right front back
+	 * Warning: No checks
+	 * content: [coordinate(3 floats)][texture coordinate(2 floats)][normal vector(3 floats)]
+	 * @return VAO
+	 */
+	public static VAO blockVAO(float textureCoord[],int mode) {
 		VAO vao=new VAO(new float[] {
-                0, 0, 0,  LD.x, LD.y,
-                1, 0, 0,  RD.x, RD.y,
-                1, 1, 0,  RU.x, RU.y,
-                0, 1, 0,  LU.x, LU.y,
-                0, 0, 1,  LD.x, LD.y,
-                1, 0, 1,  RD.x, RD.y,
-                1, 1, 1,  RU.x, RU.y,
-                0, 1, 1,  LU.x, LU.y,
-                0, 1, 1,  RD.x, RD.y,
-                0, 1, 0,  RU.x, RU.y,
-                0, 0, 0,  LU.x, LU.y,
-                1, 1, 1,  RD.x, RD.y,
-                1, 0, 0,  LU.x, LU.y,
-                1, 0, 1,  LD.x, LD.y,
-                1, 0, 0,  RU.x, RU.y,
-                0, 1, 1,  LD.x, LD.y,
-   },5);
+				0,0.99999f,0,textureCoord[0],textureCoord[1],0,1,0,
+				0.99999f,0.99999f,0.99999f,textureCoord[2],textureCoord[3],0,1,0,
+				0,0.99999f,0.99999f,textureCoord[0],textureCoord[3],0,1,0,
+				0.99999f,0.99999f,0,textureCoord[2],textureCoord[1],0,1,0,
+				0,0,0.99999f,textureCoord[4],textureCoord[5],0,-1,0,
+				0.99999f,0,0,textureCoord[6],textureCoord[7],0,-1,0,
+				0,0,0,textureCoord[4],textureCoord[7],0,-1,0,
+				0.99999f,0,0.99999f,textureCoord[6],textureCoord[5],0,-1,0,
+				0,0.99999f,0,textureCoord[8],textureCoord[9],-1,0,0,
+				0,0,0.99999f,textureCoord[10],textureCoord[11],-1,0,0,
+				0,0,0,textureCoord[8],textureCoord[11],-1,0,0,
+				0,0.99999f,0.99999f,textureCoord[10],textureCoord[9],-1,0,0,
+				0.99999f,0.99999f,0.99999f,textureCoord[12],textureCoord[13],1,0,0,
+				0.99999f,0,0,textureCoord[14],textureCoord[15],1,0,0,
+				0.99999f,0,0.99999f,textureCoord[12],textureCoord[15],1,0,0,
+				0.99999f,0.99999f,0,textureCoord[14],textureCoord[13],1,0,0,
+				0,0.99999f,0.99999f,textureCoord[16],textureCoord[17],0,0,1,
+				0.99999f,0,0.99999f,textureCoord[18],textureCoord[19],0,0,1,
+				0,0,0.99999f,textureCoord[16],textureCoord[19],0,0,1,
+				0.99999f,0.99999f,0.99999f,textureCoord[18],textureCoord[17],0,0,1,
+				0.99999f,0.99999f,0,textureCoord[20],textureCoord[21],0,0,-1,
+				0,0,0,textureCoord[22],textureCoord[23],0,0,-1,
+				0.99999f,0,0,textureCoord[20],textureCoord[23],0,0,-1,
+				0,0.99999f,0,textureCoord[22],textureCoord[21],0,0,-1
+		},8);
 		vao.bindIBO(new byte[] {
 				0,1,2,
-				2,3,0,
+				0,1,3,
 				4,5,6,
-				6,7,4,
+				4,5,7,
 				8,9,10,
-				10,4,8,
-				11,2,12,
-				12,13,11,
-				10,14,5,
-				5,4,10,
-				3,2,11,
-				11,15,3,
+				8,9,11,
+				12,13,14,
+				12,13,15,
+				16,17,18,
+				16,17,19,
+				20,21,22,
+				20,21,23
 		}, mode);
 		return vao;
 	}
