@@ -1,6 +1,5 @@
 package io.github.javaherobrine.render;
 import io.github.javaherobrine.*;
-import java.nio.*;
 import javax.imageio.*;
 import java.io.*;
 import java.awt.image.*;
@@ -64,6 +63,12 @@ public class Texture {
 		glActiveTexture(GL_TEXTURE0 + text);
 		glBindTexture(GL_TEXTURE_2D, textureID);
 	}
+	public static Texture transparent1x1() {
+		Texture text=new Texture(GL_TEXTURE_2D,1,1);
+		int[] data= {0};//Hard coding
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		return text;
+	}
 	public static Texture error() {
 		Texture text = new Texture(GL_TEXTURE_2D,16,16);
 		int data[] = { -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216,
@@ -100,6 +105,18 @@ public class Texture {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		return text;
+	}
+	public static Texture error0() {
+		Texture text = new Texture(GL_TEXTURE_2D,2,2);
+		int data[] = { 0xFFF800F8,0xFF000000,0xFF000000,0xFFF800F8};//Hard coding
+		glGenerateMipmap(GL_TEXTURE_2D);
+	//	int data[] = {0xFFF800F8,0xFF000000,0xFF000000,0xFFF800F8};//Hard coding
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		return text;
 	}
 	public static Texture sky() {

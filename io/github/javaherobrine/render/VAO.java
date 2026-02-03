@@ -72,44 +72,6 @@ public class VAO {// compact data
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	}
 	/**
-	 * Create a VAO of a block with 6 same planes
-	 */
-//	public static VAO blockVAO(Vector2f LU,Vector2f LD,Vector2f RU,Vector2f RD,int mode) {
-//		VAO vao=new VAO(new float[] {
-//                0, 0, 0,  LD.x, LD.y,
-//                1, 0, 0,  RD.x, RD.y,
-//                1, 1, 0,  RU.x, RU.y,
-//                0, 1, 0,  LU.x, LU.y,
-//                0, 0, 1,  LD.x, LD.y,
-//                1, 0, 1,  RD.x, RD.y,
-//                1, 1, 1,  RU.x, RU.y,
-//                0, 1, 1,  LU.x, LU.y,
-//                0, 1, 1,  RD.x, RD.y,
-//                0, 1, 0,  RU.x, RU.y,
-//                0, 0, 0,  LU.x, LU.y,
-//                1, 1, 1,  RD.x, RD.y,
-//                1, 0, 0,  LU.x, LU.y,
-//                1, 0, 1,  LD.x, LD.y,
-//                1, 0, 0,  RU.x, RU.y,
-//                0, 1, 1,  LD.x, LD.y,
-//   },5);
-//		vao.bindIBO(new byte[] {
-//				0,1,2,
-//				2,3,0,
-//				4,5,6,
-//				6,7,4,
-//				8,9,10,
-//				10,4,8,
-//				11,2,12,
-//				12,13,11,
-//				10,14,5,
-//				5,4,10,
-//				3,2,11,
-//				11,15,3,
-//		}, mode);
-//		return vao;
-//	}
-	/**
 	 * texture coordinates order:
 	 * up left x
 	 * up left y

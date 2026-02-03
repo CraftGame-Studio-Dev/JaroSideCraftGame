@@ -2,7 +2,6 @@ package io.github.javaherobrine.render;
 import xueli.game2.lifecycle.*;
 import java.io.*;
 import java.nio.FloatBuffer;
-import io.github.javaherobrine.math.MatrixHelper;
 import io.github.javaherobrine.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
@@ -15,15 +14,18 @@ public class Renderer implements RunnableLifeCycle {
 	private long frame = -1;
 	private Shader shader;
 	private Shader sky;
+	private Shader lightSource;
 	private FloatBuffer model=MemoryUtil.memAllocFloat(16);
 	private FloatBuffer projection=MemoryUtil.memAllocFloat(16);
 	private FloatBuffer lookAt=MemoryUtil.memAllocFloat(16);
 	private Texture skyTexture=Texture.sky();
 	private VAO skyVAO=VAO.skyVAO();
 	private Texture[] loaded= {
+			Constant.INVALID_TEXTURE_HARD_CODING,
 			Texture.create(Files.getResourcePackedInJarStream("/textures/andesite.png")),
 			Texture.create(Files.getResourcePackedInJarStream("/textures/grassblock.png")),
-			Constant.INVALID_TEXTURE_HARD_CODING};
+			Texture.error0()
+			};
 	private VAO vao;
 	public Renderer(Window window) {
 		win = window;
@@ -34,13 +36,13 @@ public class Renderer implements RunnableLifeCycle {
 	@Override
 	public void init() {
 		try {
-			shader = new Shader(Files.getResourcePackedInJarStream("/shaders/block/vertex.vs").readAllBytes(),
-					Files.getResourcePackedInJarStream("/shaders/block/fragment.fs").readAllBytes());
+			shader = new Shader(Files.getResourcePackedInJarStream("/shaders/block/block.vs").readAllBytes(),
+					Files.getResourcePackedInJarStream("/shaders/block/block.fs").readAllBytes());
 			shader.exec();
-			sky=new Shader(new String(Files.getResourcePackedInJarStream("/shaders/sky/vertex.vs").readAllBytes()),
-					new String(Files.getResourcePackedInJarStream("/shaders/sky/fragment.fs").readAllBytes()));
-			glUniform1i(3, 0);
-			glUniform1i(4, 1);
+			lightSource=new Shader(Files.getResourcePackedInJarStream("/shaders/block/lightSource.vs").readAllBytes(),
+					Files.getResourcePackedInJarStream("/shaders/block/lightSource.fs").readAllBytes());
+			sky=new Shader(Files.getResourcePackedInJarStream("/shaders/sky/vertex.vs").readAllBytes(),
+					Files.getResourcePackedInJarStream("/shaders/sky/fragment.fs").readAllBytes());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -58,30 +60,51 @@ public class Renderer implements RunnableLifeCycle {
 		win.input(deltaTime);
 		// render
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		Constant.INVALID_TEXTURE_HARD_CODING.activate(0);
 		shader.exec();
 		vao.bind();
 		vao.attribute(0, 3).attribute(1,2,3).attribute(2,3,5);
 		shader.uniform(1,win.camera.lookAt(),lookAt);
 		shader.uniform(2, win.projection);
-		for(int i=0;i<3;++i) {
-			shader.exec();
-			loaded[i].activate(0);
-			for(int j=0;j<10;++j) {
-				shader.uniform(0,new Matrix4f().translate(i, 0, j));
-				Constant.BREAKING_BLOCKS[j].activate(1);
+		for(int i=0;i<7;++i) {
+			shader.uniform(3+i,i);
+		}
+		for(int i=0;i<4;++i) {
+			for(int j=0;j<6;++j) {
+				loaded[i].activate(j);
+			}
+			for(int j=0;j<11;++j) {
+				shader.uniform(0,new Matrix4f().translate(i, 0, j),model);
+				Constant.BREAKING_BLOCKS[j].activate(6);
 				vao.apply();
 			}
 		}
-		shader.uniform(5,0.2f,0.05f,0.2f);
+		shader.uniform(10,0.2f,0.05f,0.2f);
+		lightSource.exec();
+		vao.bind();
+		vao.attribute(0, 3).attribute(1,2,3).attribute(2,3,5);
+		lightSource.uniform(0,new Matrix4f().translate(10, 10, 10),model);
+		lightSource.uniform(1,win.camera.lookAt(),lookAt);
+		lightSource.uniform(2, win.projection);
+		for(int i=0;i<7;++i) {
+			lightSource.uniform(3+i,i);
+		}
+		lightSource.exec();
+		loaded[0].activate(0);
+		loaded[1].activate(1);
+		loaded[2].activate(2);
+		Constant.BREAKING_BLOCKS[10].activate(3);
+		loaded[3].activate(4);
+		Constant.BREAKING_BLOCKS[1].activate(5);
+		Constant.BREAKING_BLOCKS[0].activate(6);
+		vao.apply();
 		sky.exec();
 		skyVAO.bind();
 		skyVAO.attribute(0,3);
-		sky.uniform(0,new Matrix4f());
+		sky.uniform(0,new Matrix4f(),model);
 		GameUtils.to3x3(lookAt);
 		glUniformMatrix4fv(1, false, lookAt);
 		sky.uniform(2,win.projection,projection);
-		glUniform1i(3, 0);
+		sky.uniform(3,0);
 		skyTexture.activate(0);
 		skyVAO.apply();
 		// process events and swap buffers

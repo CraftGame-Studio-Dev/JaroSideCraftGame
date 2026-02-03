@@ -27,8 +27,6 @@ public class Shader {
 		glDeleteShader(vertex);
 	}
 	public Shader(byte[] vertexCode, byte[] fragmentCode) {
-		System.err.println("vs: " + vertexCode);
-		System.err.println("fs: " + fragmentCode);
 		program = glCreateProgram();
 		vertex = glCreateShader(GL_VERTEX_SHADER);
 		fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -77,5 +75,8 @@ public class Shader {
 	public void uniform(int location, Matrix4f mat,FloatBuffer buffer) {
 		// System.out.println(mat);
 		glUniformMatrix4fv(location, false, mat.get(buffer));
+	}
+	public void uniform(int location,int i) {
+		glUniform1i(location, i);
 	}
 }

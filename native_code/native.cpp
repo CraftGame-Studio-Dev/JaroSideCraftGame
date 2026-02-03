@@ -1,18 +1,15 @@
 #include"io_github_javaherobrine_GameUtils.h"
-#include<functional>
-std::function<void*(JNIEnv*&,jobject&)> func;
+jfieldID addressID;
+void* (*func)(JNIEnv*&,jobject&);
 void* getAddress(JNIEnv*& env,jobject& direct){
 	return env->GetDirectBufferAddress(direct);
 }
-struct GetAddressByReflection{
-	jfieldID address;
-	void* operator()(JNIEnv*& env,jobject& direct){
-		return reinterpret_cast<void*>(env->GetLongField(direct,address));
-	}
-};
+void* getAddressReflect(JNIEnv*& env,jobject& direct){
+	return reinterpret_cast<void*>(env->GetLongField(direct,addressID));
+}
 JNIEXPORT jlong JNICALL Java_io_github_javaherobrine_GameUtils_address
   (JNIEnv * env, jclass, jbyteArray data){
-	return reinterpret_cast<jlong>(env->GetPrimitiveArrayCritical (data,nullptr));
+	return reinterpret_cast<jlong>(env->GetPrimitiveArrayCritical(data,nullptr));
 }
 JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_allowGC
   (JNIEnv *env, jclass, jlong addr, jbyteArray data){
@@ -25,10 +22,9 @@ JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_supportsNIOAccess
 	}else{
 		fprintf(stderr,"%s\n","[WARNING] Performance Decreased: Access to the address of direct buffers is unreachable");
 		fflush(stderr);
-		GetAddressByReflection reflect;
 		jclass clazz=env->FindClass("java/nio/Buffer");
-		reflect.address=env->GetFieldID(clazz,"address","J");
-		func=reflect;
+		addressID=env->GetFieldID(clazz,"address","J");
+		func=getAddressReflect;
 	}
 }
 JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_to3x3

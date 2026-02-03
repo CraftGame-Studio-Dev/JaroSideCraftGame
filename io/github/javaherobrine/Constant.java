@@ -5,6 +5,7 @@ public class Constant {// Declare constants
 	public static final String TITLE = "CraftGame FPS=";
 	public static final Texture INVALID_TEXTURE_HARD_CODING=Texture.error();
 	public static final Texture[] BREAKING_BLOCKS= {
+		Texture.transparent1x1(),
 		Texture.create(Files.getResourcePackedInJarStream("/textures/status/destroy_stage_0.png")),
 		Texture.create(Files.getResourcePackedInJarStream("/textures/status/destroy_stage_1.png")),
 		Texture.create(Files.getResourcePackedInJarStream("/textures/status/destroy_stage_2.png")),
