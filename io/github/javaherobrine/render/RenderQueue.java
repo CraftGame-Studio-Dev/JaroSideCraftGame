@@ -1,25 +1,46 @@
 package io.github.javaherobrine.render;
-public class RenderQueue {
+public class RenderQueue implements Renderable{
+	LinkedList internal=new LinkedList();
+	private Shader shader;
 	public static class LinkedListNode{
-		public VAO vao;
+		public Renderable renderable;
 		private LinkedListNode prev,next;
-		public void remove() {
+		public LinkedListNode remove() {
 			prev.next=next;
 			next.prev=prev;
+			LinkedListNode next=this.next;
+			this.next=null;
+			this.prev=null;
+			return next;
 		}
-		public void render() {}
+		public void link(LinkedListNode t0) {
+			t0.next=next;
+			t0.prev=this;
+			next=t0;
+		}
 	}
 	private static class LinkedList{
-		LinkedListNode NIL=new LinkedListNode();
+		final LinkedListNode NIL;
 		LinkedList(){
+			NIL=new LinkedListNode();
 			NIL.prev=NIL;
 			NIL.next=NIL;
 		}
-		void put(LinkedListNode node) {
-			node.next=NIL.next;
-			NIL.next.prev=node;
-			node.prev=NIL;
-			NIL.next=node;
+	}
+	@Override
+	public void render() {
+		shader.exec();
+		LinkedListNode nil=internal.NIL;
+		nil=nil.next;
+		while(nil!=internal.NIL) {
+			nil.renderable.render();
+			nil=nil.next;
 		}
+	}
+	public LinkedListNode put(Renderable renderable) {
+		LinkedListNode node=new LinkedListNode();
+		node.renderable=renderable;
+		internal.NIL.link(node);
+		return node;
 	}
 }
