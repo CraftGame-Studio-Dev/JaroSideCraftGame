@@ -44,7 +44,8 @@ public abstract class Block implements Cloneable, JSONSerializable, Renderable{
 		valueOf((String) input.get("value"));
 	}
 	@Override
-	public void render() {
+	public void render(Renderer renderer) {
+		GameUtils.modelMatrix(renderer.modelAddr, x, y, z);
 		up.activate(0);
 		down.activate(1);
 		left.activate(2);

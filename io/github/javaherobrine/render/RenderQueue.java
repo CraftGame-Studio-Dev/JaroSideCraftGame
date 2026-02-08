@@ -28,12 +28,12 @@ public class RenderQueue implements Renderable{
 		}
 	}
 	@Override
-	public void render() {
+	public void render(Renderer renderer) {
 		shader.exec();
 		LinkedListNode nil=internal.NIL;
 		nil=nil.next;
 		while(nil!=internal.NIL) {
-			nil.renderable.render();
+			nil.renderable.render(renderer);
 			nil=nil.next;
 		}
 	}

@@ -7,7 +7,7 @@ void* getAddress(JNIEnv*& env,jobject& direct){
 void* getAddressReflect(JNIEnv*& env,jobject& direct){
 	return reinterpret_cast<void*>(env->GetLongField(direct,addressID));
 }
-JNIEXPORT jlong JNICALL Java_io_github_javaherobrine_GameUtils_address
+JNIEXPORT jlong JNICALL Java_io_github_javaherobrine_GameUtils_address___3B
   (JNIEnv * env, jclass, jbyteArray data){
 	return reinterpret_cast<jlong>(env->GetPrimitiveArrayCritical(data,nullptr));
 }
@@ -44,4 +44,23 @@ JNIEXPORT jlong JNICALL Java_io_github_javaherobrine_GameUtils_pointerOfPointer
 JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_freePointerOfPointer
   (JNIEnv *env, jclass, jlong addr, jlongArray data){
 	env->ReleasePrimitiveArrayCritical(data,reinterpret_cast<void*>(addr),0);
+}
+JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_modelMatrix
+  (JNIEnv *, jclass, jlong addr, jfloat x, jfloat y, jfloat z){
+	float* ptr=reinterpret_cast<float*>(addr);
+	ptr[12]=x;
+	ptr[13]=y;
+	ptr[14]=z;
+}
+JNIEXPORT jlong JNICALL Java_io_github_javaherobrine_GameUtils_address__Ljava_nio_Buffer_2
+  (JNIEnv* env, jclass, jobject object){
+	return reinterpret_cast<jlong>(func(env,object));
+}
+JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_makeIdentity
+  (JNIEnv *env, jclass, jlong addr){
+	float* ptr=reinterpret_cast<float*>(addr);
+	ptr[0]=1;
+	ptr[5]=1;
+	ptr[10]=1;
+	ptr[15]=1;
 }

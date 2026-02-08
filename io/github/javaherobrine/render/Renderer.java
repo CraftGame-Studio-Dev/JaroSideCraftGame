@@ -15,9 +15,12 @@ public class Renderer implements RunnableLifeCycle {
 	private Shader shader;
 	private Shader sky;
 	private Shader lightSource;
-	private FloatBuffer model=MemoryUtil.memAllocFloat(16);
-	private FloatBuffer projection=MemoryUtil.memAllocFloat(16);
-	private FloatBuffer lookAt=MemoryUtil.memAllocFloat(16);
+	public final FloatBuffer model=MemoryUtil.memAllocFloat(16);
+	public final FloatBuffer projection=MemoryUtil.memAllocFloat(16);
+	public final FloatBuffer lookAt=MemoryUtil.memAllocFloat(16);
+	public final long modelAddr;
+	public final long projectionAddr;
+	public final long lookAtAddr;
 	private Texture skyTexture=Texture.sky();
 	private VAO skyVAO=VAO.skyVAO();
 	private Texture[] loaded= {
@@ -28,6 +31,10 @@ public class Renderer implements RunnableLifeCycle {
 			};
 	private VAO vao;
 	public Renderer(Window window) {
+		modelAddr=GameUtils.address(model);
+		projectionAddr=GameUtils.address(projection);
+		lookAtAddr=GameUtils.address(lookAt);
+		GameUtils.makeIdentity(modelAddr);
 		win = window;
 		vao=VAO.blockVAO(VAO.NO_ATLAS_COORDINATE,GL_STATIC_DRAW);
 		vao.bindVBO(GL_STATIC_DRAW);

@@ -4,6 +4,7 @@ import java.util.Random;
 import java.util.Arrays;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.Buffer;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.system.NativeType;
 import java.lang.invoke.*;
@@ -117,4 +118,7 @@ public final class GameUtils {
 	public static native void to3x3(FloatBuffer buf);
 	public static native @NativeType("void**") long pointerOfPointer(@NativeType("void**")long[] pointer);
 	public static native void freePointerOfPointer(long addr,long[] pointer);
+	public static native void modelMatrix(@NativeType("float*")long address,float x,float y,float z);
+	public static native long address(Buffer buf);
+	public static native void makeIdentity(long addr);
 }

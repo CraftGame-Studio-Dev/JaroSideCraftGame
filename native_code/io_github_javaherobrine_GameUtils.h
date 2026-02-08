@@ -12,7 +12,7 @@ extern "C" {
  * Method:    address
  * Signature: ([B)J
  */
-JNIEXPORT jlong JNICALL Java_io_github_javaherobrine_GameUtils_address
+JNIEXPORT jlong JNICALL Java_io_github_javaherobrine_GameUtils_address___3B
   (JNIEnv *, jclass, jbyteArray);
 JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_allowGC
   (JNIEnv *, jclass, jlong, jbyteArray);
@@ -24,6 +24,12 @@ JNIEXPORT jlong JNICALL Java_io_github_javaherobrine_GameUtils_pointerOfPointer
   (JNIEnv *, jclass, jlongArray);
 JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_freePointerOfPointer
   (JNIEnv *, jclass, jlong, jlongArray);
+JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_modelMatrix
+  (JNIEnv *, jclass, jlong, jfloat, jfloat, jfloat);
+JNIEXPORT jlong JNICALL Java_io_github_javaherobrine_GameUtils_address__Ljava_nio_Buffer_2
+  (JNIEnv *, jclass, jobject);
+JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_makeIdentity
+  (JNIEnv *, jclass, jlong);
 #ifdef __cplusplus
 }
 #endif
