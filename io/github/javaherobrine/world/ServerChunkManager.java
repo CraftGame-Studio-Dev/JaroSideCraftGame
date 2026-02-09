@@ -1,49 +1,47 @@
 package io.github.javaherobrine.world;
 import io.github.javaherobrine.net.*;
 import io.github.javaherobrine.*;
-import java.io.IOException;
 import java.util.*;
 public final class ServerChunkManager extends LocalChunkManager {
-	public final Server server;
+	public final ServerImpl server;
 	public HashMap<SIITuple, Integer> count;
-	public ServerChunkManager(Save s, Server server) {
+	public ServerChunkManager(Save s, ServerImpl server) {
 		super(s);
 		this.server = server;
 	}
-	public ServerChunkManager(LocalChunkManager localChunkManager, Server server2) {
+	public ServerChunkManager(LocalChunkManager localChunkManager, ServerImpl server2) {
 		this(localChunkManager.sav, server2);
 		loaded = localChunkManager.loaded;
 		loaded.keySet().forEach(key -> {
 			count.put(key, 1);
 		});
 	}
-	public void unload(String dimension, int x, int y) {
+	public Chunk unload(String dimension, int x, int y) {
 		SIITuple pair = new SIITuple(dimension, x, y);
+		Chunk chk=loaded.get(pair);
 		count.compute(pair, (k, v) -> {
 			if (v == null) {
 				throw new Error("panic");
 			}
 			--v;
 			if (v == 0) {
-				try {
-					sav.writeChunk(loaded.remove(pair), dimension, x, y);
-				} catch (IOException e) {
-					throw new Error(e);
-				}
+				super.unload(dimension, x, y);
 				return null;
 			}
 			return v;
 		});
+		return chk;
 	}
+	@Override
 	public Chunk load(String dimension, int x, int y) {
 		SIITuple pair = new SIITuple(dimension, x, y);
+		Chunk chunk=super.load(dimension, x, y);
 		count.compute(pair, (k, v) -> {
 			if (v == null) {
-				loaded.put(pair, getUnloadedChunk(dimension, x, y));
 				return 1;
 			}
 			return v + 1;
 		});
-		return loaded.get(pair);
+		return chunk;
 	}
 }

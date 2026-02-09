@@ -1,14 +1,48 @@
 package io.github.javaherobrine.world;
 import java.util.*;
+import java.util.function.*;
+import java.lang.ref.*;
 import io.github.javaherobrine.*;
 public sealed abstract class ChunkManager permits LocalChunkManager, NetworkChunkManager {
-	public HashMap<SIITuple, Chunk> loaded;
+	public HashMap<SIITuple, Chunk> loaded=new HashMap<>();
+	private HashMap<SIITuple, WeakReference<Chunk>> buffered=new HashMap<>();
+	private static final BiFunction<SIITuple,WeakReference<Chunk>,WeakReference<Chunk>> handleWeakRef=(k,v)->{
+		if(v.get()==null) {
+			return null;
+		}
+		return v;
+	};
+	public Consumer<Chunk> onLoad=NONE;
+	public Consumer<Chunk> onUnload=NONE;
+	private final BiFunction<SIITuple,Chunk,Chunk> unloadAll=(k,v)->{
+		buffered.put(k,new WeakReference<>(v));
+		onUnload.accept(v);
+		return null;
+	};
+	private static final Consumer<Chunk> NONE=v->{};
 	protected String dimension = "";
-	public Chunk unload(int x, int y) {
-		return loaded.remove(new SIITuple(dimension, x, y));
+	public Chunk unload(String dimension,int x, int y) {
+		SIITuple tuple=new SIITuple(dimension,x,y);
+		Chunk chunk=loaded.remove(tuple);
+		buffered.put(tuple,new WeakReference<>(chunk));
+		onUnload.accept(chunk);
+		return chunk;
 	}
-	public Chunk getChunk(int x, int y) {
-		return loaded.computeIfAbsent(new SIITuple(dimension, x, y), k -> getUnloadedChunk(dimension, x, y));
+	public void unloadAll() {
+		loaded.replaceAll(unloadAll);
+	}
+	public Chunk load(String dimension,int x, int y) {
+		SIITuple tuple=new SIITuple(dimension,x,y);
+		Chunk chunk=loaded.get(tuple);
+		if(chunk==null) {
+			var chunkRef=buffered.computeIfPresent(tuple,handleWeakRef);
+			if(chunkRef==null) {
+				chunk=getUnloadedChunk(dimension,x,y);
+			}else {
+				chunk=chunkRef.get();
+			}
+		}
+		return chunk;
 	}
 	public abstract Chunk getUnloadedChunk(String dimension, int x, int y);
 	public void changeDimension(String d) {
@@ -16,9 +50,9 @@ public sealed abstract class ChunkManager permits LocalChunkManager, NetworkChun
 			return;
 		}
 		dimension = d;
-		loaded.clear();
+		unloadAll();
 	}
-	public void loadChunk(int x, int y, Chunk chk) {
+	public void offerChunk(String dimension, int x, int y, Chunk chk) {
 		if (chk != null) {
 			loaded.put(new SIITuple(dimension, x, y), chk);
 		}

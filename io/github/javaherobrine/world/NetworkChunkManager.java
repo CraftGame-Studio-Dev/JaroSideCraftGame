@@ -25,8 +25,9 @@ public final class NetworkChunkManager extends ChunkManager {
 		return null;
 	}
 	@Override
-	public Chunk unload(int x, int y) {
-		Chunk chk = super.unload(x, y);
+	public Chunk unload(String dimension, int x, int y) {
+		super.unload(dimension, x, y);
+		Chunk chk = super.unload(dimension, x, y);
 		ChunkLoadEvent e = new ChunkLoadEvent();
 		e.x = x;
 		e.y = y;

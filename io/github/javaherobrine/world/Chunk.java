@@ -8,14 +8,14 @@ import io.github.javaherobrine.format.*;
 import io.github.javaherobrine.*;
 public class Chunk implements Serializable, JSONSerializable {
 	private static final long serialVersionUID = 1L;
-	public Block[][][] chunk = new Block[16][16][256];// It's an air on condition that its value is null
+	public Block[][][] chunk = new Block[16][256][16];// It's an air on condition that its value is null
 	@SuppressWarnings("unchecked")
 	@Override
 	public SimpleEntry<String, Object>[] values() {
 		ArrayList<BlockWrapper> arr = new ArrayList<>();
 		for (int i = 0; i < 16; i++) {
-			for (int j = 0; j < 16; j++) {
-				for (int k = 0; k < 256; k++) {
+			for (int j = 0; j < 256; j++) {
+				for (int k = 0; k < 16; k++) {
 					if (chunk[i][j][k] != null) {
 						BlockWrapper wrap = new BlockWrapper();
 						wrap.x = i;

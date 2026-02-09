@@ -5,7 +5,7 @@ import io.github.javaherobrine.render.*;
 import java.util.*;
 public abstract class Block implements Cloneable, JSONSerializable, Renderable{
 	int x,y,z;
-	Texture up,down,left,right,front,back;
+	public transient Texture up,down,left,right,front,back;
 	public Block() {
 	}
 	public Block(String str) {
