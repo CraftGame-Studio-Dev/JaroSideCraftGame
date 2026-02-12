@@ -2,7 +2,6 @@ package io.github.javaherobrine.world;
 import java.io.*;
 import io.github.javaherobrine.net.*;
 import io.github.javaherobrine.net.event.*;
-import io.github.javaherobrine.*;
 public final class NetworkChunkManager extends ChunkManager {
 	private Client connection;
 	public NetworkChunkManager(Client c) {
@@ -14,12 +13,9 @@ public final class NetworkChunkManager extends ChunkManager {
 		e.dimension = dimension;
 		e.x = x;
 		e.y = y;
-		SIITuple pair = new SIITuple(dimension, x, y);
 		try {
 			connection.send(e);
-			while ((!Thread.interrupted()) && loaded.get(pair) == null) {
-			}
-			return loaded.get(pair);
+			return Chunk.NULL_CHUNK;
 		} catch (IOException e1) {
 		} // network error
 		return null;

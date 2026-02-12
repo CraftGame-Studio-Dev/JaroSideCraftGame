@@ -44,6 +44,17 @@ public sealed abstract class ChunkManager permits LocalChunkManager, NetworkChun
 		}
 		return chunk;
 	}
+	public Chunk loadedOrCached(String dimension,int x,int y) {
+		SIITuple tuple=new SIITuple(dimension,x,y);
+		Chunk chunk=loaded.get(tuple);
+		if(chunk==null) {
+			var chunkRef=buffered.computeIfPresent(tuple, handleWeakRef);
+			if(chunkRef!=null) {
+				chunk=chunkRef.get();
+			}
+		}
+		return chunk;
+	}
 	public abstract Chunk getUnloadedChunk(String dimension, int x, int y);
 	public void changeDimension(String d) {
 		if (d.equals(dimension)) {
@@ -52,10 +63,15 @@ public sealed abstract class ChunkManager permits LocalChunkManager, NetworkChun
 		dimension = d;
 		unloadAll();
 	}
-	public void offerChunk(String dimension, int x, int y, Chunk chk) {
-		if (chk != null) {
+	public boolean offerChunk(String dimension, int x, int y, Chunk chk) {
+		SIITuple tuple=new SIITuple(dimension,x,y);
+		if(loaded.containsKey(tuple)) {
 			loaded.put(new SIITuple(dimension, x, y), chk);
+			return true;
+		}else if(buffered.containsKey(tuple)){
+			buffered.get(tuple).refersTo(chk);
 		}
+		return false;
 	}
 	public static ChunkManager manager;
 }

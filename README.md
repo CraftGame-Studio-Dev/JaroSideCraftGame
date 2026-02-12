@@ -10,7 +10,7 @@ For `MacOS` users, maybe `MGL` must be installed before (To translate `OpenGL` t
 ## Progress: 
 - [x] Network: C/S Framework, based on craftgame-tcp
 - [x] Mods: Loader
-- [x] Chunks: Chunks management
+- [x] Chunks: Chunks management, caches and rendering
 - [ ] Chunks: Chunks generator
 - [ ] Network: Specific implementations
 - [ ] GUI: renderer

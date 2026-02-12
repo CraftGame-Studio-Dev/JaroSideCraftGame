@@ -120,5 +120,5 @@ public final class GameUtils {
 	public static native void freePointerOfPointer(long addr,long[] pointer);
 	public static native void modelMatrix(@NativeType("float*")long address,float x,float y,float z);
 	public static native long address(Buffer buf);
-	public static native void makeIdentity(long addr);
+	public static native void makeIdentity(@NativeType("float*")long addr);
 }

@@ -59,8 +59,6 @@ JNIEXPORT jlong JNICALL Java_io_github_javaherobrine_GameUtils_address__Ljava_ni
 JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_makeIdentity
   (JNIEnv *env, jclass, jlong addr){
 	float* ptr=reinterpret_cast<float*>(addr);
-	ptr[0]=1;
-	ptr[5]=1;
-	ptr[10]=1;
-	ptr[15]=1;
+	ptr[0]=ptr[5]=ptr[10]=ptr[15]=1;
+	ptr[1]=ptr[2]=ptr[3]=ptr[4]=ptr[6]=ptr[7]=ptr[8]=ptr[9]=ptr[11]=ptr[12]=ptr[13]=ptr[14]=0;
 }

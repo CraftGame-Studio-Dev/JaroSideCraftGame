@@ -41,7 +41,9 @@ public class ChunkLoadEvent extends EventContent {
 			recv.send(this);
 		} else {
 			ChunkManager.manager.changeDimension(dimension);
-			ChunkManager.manager.offerChunk(dimension, x, y, chk);
+			if(ChunkManager.manager.offerChunk(dimension, x, y, chk)) {
+				ChunkManager.manager.onLoad.accept(chk);
+			}
 		}
 	}
 	@Override

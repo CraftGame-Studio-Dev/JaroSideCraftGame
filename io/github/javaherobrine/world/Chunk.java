@@ -8,6 +8,7 @@ import io.github.javaherobrine.format.*;
 import io.github.javaherobrine.*;
 public class Chunk implements Serializable, JSONSerializable {
 	private static final long serialVersionUID = 1L;
+	public static final Chunk NULL_CHUNK=new Chunk();
 	public Block[][][] chunk = new Block[16][256][16];// It's an air on condition that its value is null
 	@SuppressWarnings("unchecked")
 	@Override
