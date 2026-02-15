@@ -1,56 +1,46 @@
 package io.github.javaherobrine.blocks;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map;
+import java.io.*;
+import java.math.*;
 import io.github.javaherobrine.*;
+import io.github.javaherobrine.TrieNode;
 import io.github.javaherobrine.format.*;
 import io.github.javaherobrine.render.*;
-import java.util.*;
-public abstract class Block implements Cloneable, JSONSerializable, Renderable{
-	int x,y,z;
-	public transient Texture up,down,left,right,front,back;
-	public Block() {
-	}
-	public Block(String str) {
-		valueOf(str);
-	}
-	public abstract void valueOf(String str);
-	@Override
-	public abstract String toString();
-	public static Block load(String str) {
-		String[] temp = str.split(" ", 2);
-		Block b = (Block) TrieNode.REGISTRY.access(temp[0]);
-		if (b == null) {
-			return null;
-		}
-		b = b.clone();
-		b.valueOf(temp[1]);
-		return b;
-	}
-	@Override
-	public Block clone() {
-		try {
-			return (Block) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new Error("panic");// oops, JVM isn't reliable, or code has been illegally modified!
-		}
-	}
+import xueli.registry.*;
+public class Block implements JSONSerializable, Serializable, Renderable{
+	private static final long serialVersionUID = 1L;
+	public BlockPrototype prototype;
+	public String dimension;
+	public RenderQueue.LinkedListNode node;
+	public int x,y,z;
 	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractMap.SimpleEntry<String, Object>[] values() {
-		return new AbstractMap.SimpleEntry[] {
-				new AbstractMap.SimpleEntry<String, Object>("type", getClass().getName()),
-				new AbstractMap.SimpleEntry<String, Object>("value", toString()) };
+	public SimpleEntry<String, Object>[] values() {
+		return new SimpleEntry[] {
+				new SimpleEntry<String,Object>("x",x),
+				new SimpleEntry<String,Object>("y",y),
+				new SimpleEntry<String,Object>("z",z),
+				new SimpleEntry<String,Object>("prototype",prototype),
+				new SimpleEntry<String,Object>("dimension",dimension)
+		};
 	}
 	@Override
 	public void valueOf(Map<String, Object> input) {
-		valueOf((String) input.get("value"));
+		x=((BigInteger)input.get("x")).intValue();
+		y=((BigInteger)input.get("y")).intValue();
+		z=((BigInteger)input.get("z")).intValue();
+		prototype=(BlockPrototype)TrieNode.REGISTRY.access(new Identifier("prototype",(String)input.get("block_prototype")));
 	}
 	@Override
 	public void render(Renderer renderer) {
 		GameUtils.modelMatrix(renderer.modelAddr, x, y, z);
-		up.activate(0);
-		down.activate(1);
-		left.activate(2);
-		right.activate(3);
-		front.activate(4);
-		back.activate(5);
+		prototype.up.activate(3);
+		prototype.down.activate(4);
+		prototype.front.activate(5);
+		prototype.end.activate(6);
+		prototype.left.activate(7);
+		prototype.right.activate(8);
+		prototype.vao.apply();
 	}
 }

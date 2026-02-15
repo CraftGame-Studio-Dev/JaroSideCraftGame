@@ -13,10 +13,12 @@ public class RenderQueue implements Renderable{
 			this.prev=null;
 			return next;
 		}
-		public void link(LinkedListNode t0) {
-			t0.next=next;
-			t0.prev=this;
-			next=t0;
+		public synchronized void link(LinkedListNode t0) {
+			synchronized(t0) {
+				t0.next=next;
+				t0.prev=this;
+				next=t0;
+			}
 		}
 	}
 	private static class LinkedList{
@@ -33,8 +35,10 @@ public class RenderQueue implements Renderable{
 		LinkedListNode nil=internal.NIL;
 		nil=nil.next;
 		while(nil!=internal.NIL) {
-			nil.renderable.render(renderer);
-			nil=nil.next;
+			synchronized(nil) {
+				nil.renderable.render(renderer);
+				nil=nil.next;
+			}
 		}
 	}
 	public LinkedListNode put(Renderable renderable) {

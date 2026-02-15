@@ -2,6 +2,7 @@ package io.github.javaherobrine.world;
 import java.util.*;
 import java.util.function.*;
 import java.lang.ref.*;
+import java.util.function.*;
 import io.github.javaherobrine.*;
 public sealed abstract class ChunkManager permits LocalChunkManager, NetworkChunkManager {
 	public HashMap<SIITuple, Chunk> loaded=new HashMap<>();
@@ -31,21 +32,21 @@ public sealed abstract class ChunkManager permits LocalChunkManager, NetworkChun
 	public void unloadAll() {
 		loaded.replaceAll(unloadAll);
 	}
-	public Chunk load(String dimension,int x, int y) {
-		SIITuple tuple=new SIITuple(dimension,x,y);
+	public Chunk load(String dimension,int x, int z) {
+		SIITuple tuple=new SIITuple(dimension,x,z);
 		Chunk chunk=loaded.get(tuple);
 		if(chunk==null) {
 			var chunkRef=buffered.computeIfPresent(tuple,handleWeakRef);
 			if(chunkRef==null) {
-				chunk=getUnloadedChunk(dimension,x,y);
+				chunk=getUnloadedChunk(dimension,x,z);
 			}else {
 				chunk=chunkRef.get();
 			}
 		}
 		return chunk;
 	}
-	public Chunk loadedOrCached(String dimension,int x,int y) {
-		SIITuple tuple=new SIITuple(dimension,x,y);
+	public void forLoadedOrCached(String dimension,int x,int z, Consumer<Chunk> apply) {
+		SIITuple tuple=new SIITuple(dimension,x,z);
 		Chunk chunk=loaded.get(tuple);
 		if(chunk==null) {
 			var chunkRef=buffered.computeIfPresent(tuple, handleWeakRef);
@@ -53,9 +54,8 @@ public sealed abstract class ChunkManager permits LocalChunkManager, NetworkChun
 				chunk=chunkRef.get();
 			}
 		}
-		return chunk;
 	}
-	public abstract Chunk getUnloadedChunk(String dimension, int x, int y);
+	public abstract Chunk getUnloadedChunk(String dimension, int x, int z);
 	public void changeDimension(String d) {
 		if (d.equals(dimension)) {
 			return;
@@ -63,10 +63,10 @@ public sealed abstract class ChunkManager permits LocalChunkManager, NetworkChun
 		dimension = d;
 		unloadAll();
 	}
-	public boolean offerChunk(String dimension, int x, int y, Chunk chk) {
-		SIITuple tuple=new SIITuple(dimension,x,y);
+	public boolean offerChunk(String dimension, int x, int z, Chunk chk) {
+		SIITuple tuple=new SIITuple(dimension,x,z);
 		if(loaded.containsKey(tuple)) {
-			loaded.put(new SIITuple(dimension, x, y), chk);
+			loaded.put(new SIITuple(dimension, x, z), chk);
 			return true;
 		}else if(buffered.containsKey(tuple)){
 			buffered.get(tuple).refersTo(chk);

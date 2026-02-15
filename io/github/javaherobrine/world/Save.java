@@ -1,10 +1,10 @@
 package io.github.javaherobrine.world;
 import java.io.*;
-import io.github.javaherobrine.blocks.*;
-import io.github.javaherobrine.*;
 import io.github.javaherobrine.net.event.*;
 import io.github.javaherobrine.modloader.*;
+import io.github.javaherobrine.format.*;
 import java.util.*;
+import java.util.zip.*;
 public class Save {
 	private String saveFolder;
 	public Save(File input) throws IOException {
@@ -41,40 +41,23 @@ public class Save {
 		}
 		bw.close();
 	}
-	public Chunk readChunk(String dimension, int x, int y) throws IOException {
-		File f = new File(saveFolder + "/chunks/" + dimension + "-" + x + "," + y + ".dat");
+	@SuppressWarnings("unchecked")
+	public Chunk readChunk(String dimension, int x, int z) throws IOException {
+		File f = new File(saveFolder + "/chunks/" + dimension + "-" + x + "," + z + ".dat");
 		if (!f.exists()) {
 			return null;
 		}
-		BufferedReader reader = new BufferedReader(new FileReader(f));
-		Chunk chk = new Chunk();
-		int ch = reader.read();
-		while (ch != -1) {
-			int p = GameUtils.readUint(reader);
-			int q = GameUtils.readUint(reader);
-			int r = GameUtils.readUint(reader);
-			chk.chunk[p][q][r] = Block.load(reader.readLine());
-		}
-		reader.close();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(f))));
+		JSONReader r=new JSONReader(reader);
+		Chunk chk=new Chunk();
+		chk.valueOf((HashMap<String,Object>)r.readObject());
+		r.close();
 		return chk;
 	}
-	public void writeChunk(Chunk chk, String dimension, int x, int y) throws IOException {
-		PrintWriter pw = new PrintWriter(
-				new BufferedWriter(new FileWriter(saveFolder + "/chunks/" + dimension + "-" + x + "," + y + ".dat")));
-		for (int p = 0; p < 16; p++) {
-			for (int q = 0; q < 16; q++) {
-				for (int r = 0; r < 256; r++) {
-					Block b = chk.chunk[p][q][r];
-					if (b != null) {
-						pw.printf("(%d,%d,%d) %s %s\n", p, q, r, b.getClass().getName(), b.toString());
-					}
-				}
-			}
-		}
-		pw.close();
-		if (pw.checkError()) {
-			throw new IOException("2333");
-		}
+	public void writeChunk(Chunk chk, String dimension, int x, int z) throws IOException {
+		JSONWriter writer=new JSONWriter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(saveFolder + "/chunks/" + dimension + "-" + x + "," + z + ".dat")))));
+		writer.writeObject(chk);
+		writer.close();
 	}
 	public void writeWorldType(String[] worldTypes) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(saveFolder + "/world.type"));

@@ -8,11 +8,11 @@ public final class NetworkChunkManager extends ChunkManager {
 		connection = c;
 	}
 	@Override
-	public Chunk getUnloadedChunk(String dimension, int x, int y) {
+	public Chunk getUnloadedChunk(String dimension, int x, int z) {
 		ChunkLoadEvent e = new ChunkLoadEvent();
 		e.dimension = dimension;
 		e.x = x;
-		e.y = y;
+		e.z = z;
 		try {
 			connection.send(e);
 			return Chunk.NULL_CHUNK;
@@ -21,12 +21,12 @@ public final class NetworkChunkManager extends ChunkManager {
 		return null;
 	}
 	@Override
-	public Chunk unload(String dimension, int x, int y) {
-		super.unload(dimension, x, y);
-		Chunk chk = super.unload(dimension, x, y);
+	public Chunk unload(String dimension, int x, int z) {
+		super.unload(dimension, x, z);
+		Chunk chk = super.unload(dimension, x, z);
 		ChunkLoadEvent e = new ChunkLoadEvent();
 		e.x = x;
-		e.y = y;
+		e.z = z;
 		e.dimension = dimension;
 		e.unload = true;
 		try {

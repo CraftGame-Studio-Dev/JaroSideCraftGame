@@ -6,21 +6,21 @@ public sealed class LocalChunkManager extends ChunkManager permits ServerChunkMa
 		sav = s;
 	}
 	@Override
-	public Chunk unload(String dimension,int x, int y) {
-		super.unload(dimension, x, y);
-		Chunk chk = super.unload(dimension, x, y);
+	public Chunk unload(String dimension,int x, int z) {
+		super.unload(dimension, x, z);
+		Chunk chk = super.unload(dimension, x, z);
 		try {
-			sav.writeChunk(chk, dimension, x, y);
+			sav.writeChunk(chk, dimension, x, z);
 		} catch (IOException e) {
 			throw new Error(e);
 		}
 		return chk;
 	}
 	@Override
-	public Chunk getUnloadedChunk(String dimension, int x, int y) {
+	public Chunk getUnloadedChunk(String dimension, int x, int z) {
 		Chunk c = null;
 		try {
-			c = sav.readChunk(dimension, x, y);
+			c = sav.readChunk(dimension, x, z);
 		} catch (IOException e) {
 			System.err.println("bad file");
 		}
@@ -32,7 +32,7 @@ public sealed class LocalChunkManager extends ChunkManager permits ServerChunkMa
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 256; j++) {
 				for (int k = 0; k < 16; k++) {
-					c.chunk[i][j][k] = d.gen().generate((x << 4) | i, j, (y << 4) | k);
+					c.chunk[i][j][k] = d.gen().generate((x << 4) | i, j, (z << 4) | k);
 				}
 			}
 		}

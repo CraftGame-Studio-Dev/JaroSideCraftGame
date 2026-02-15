@@ -27,7 +27,8 @@ public class LoginEvent extends EventContent {
 	@Override
 	public SimpleEntry<String, Object>[] values() {
 		return new SimpleEntry[] { new SimpleEntry<String, Object>("player", player),
-				new SimpleEntry<String, Object>("sync", sync) };
+				new SimpleEntry<String, Object>("sync", sync)
+			};
 	}
 	@Override
 	public void valueOf(Map<String, Object> input) {

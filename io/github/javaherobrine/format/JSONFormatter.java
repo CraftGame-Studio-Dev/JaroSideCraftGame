@@ -5,7 +5,7 @@ import java.util.Map;
 public final class JSONFormatter {
 	private JSONFormatter() {
 	}
-	public static String format(String raw) {
+	public static String format(CharSequence raw) {
 		final StringBuilder sb = new StringBuilder(raw.length() << 1 + 2);
 		sb.append('\"');
 		raw.chars().forEach(ch -> {
@@ -174,8 +174,10 @@ public final class JSONFormatter {
 			return format((JSONSerializable) obj);
 		} else if (obj instanceof Number) {
 			return format((Number) obj);
-		} else if (obj instanceof String) {
-			return format((String) obj);
+		} else if (obj instanceof CharSequence) {
+			return format((CharSequence) obj);
+		} else if (obj instanceof JSONString str) {
+			return format(str.toString());
 		} else if (obj instanceof boolean[]) {
 			return format((boolean[]) obj);
 		} else if (obj instanceof short[]) {

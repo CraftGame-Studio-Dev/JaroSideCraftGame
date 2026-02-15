@@ -15,7 +15,7 @@ public class ChatEvent extends EventContent {
 	@Override
 	public void valueOf(Map<String, Object> input) {
 		destination = (String) input.get("destination");
-		content = (String) input.get("Content");
+		content = (String) input.get("content");
 	}
 	@Override
 	public void recvExec(boolean serverside) throws Exception {

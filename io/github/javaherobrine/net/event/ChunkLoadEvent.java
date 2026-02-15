@@ -11,18 +11,19 @@ public class ChunkLoadEvent extends EventContent {
 	public boolean unload = false;
 	public String dimension;
 	public int x;
-	public int y;
+	public int z;
 	@SuppressWarnings("unchecked")
 	@Override
 	public SimpleEntry<String, Object>[] values() {
 		return new SimpleEntry[] { new SimpleEntry<String, Object>("dimension", dimension),
-				new SimpleEntry<String, Object>("x", x), new SimpleEntry<String, Object>("y", y),
-				new SimpleEntry<String, Object>("chunk", chk) };
+				new SimpleEntry<String, Object>("x", x), new SimpleEntry<String, Object>("z", z),
+				new SimpleEntry<String, Object>("chunk", chk)
+			};
 	}
 	@Override
 	public void valueOf(Map<String, Object> input) {
 		x = ((BigInteger) input.get("x")).intValue();
-		y = ((BigInteger) input.get("y")).intValue();
+		z = ((BigInteger) input.get("z")).intValue();
 		dimension = ((String) input.get("dimension"));
 		chk = (Chunk) input.get("chunk");
 	}
@@ -32,16 +33,16 @@ public class ChunkLoadEvent extends EventContent {
 			ServerChunkManager scm = (ServerChunkManager) ChunkManager.manager;
 			ServerSideClientImpl recv = (ServerSideClientImpl) recver;
 			if (unload) {
-				scm.unload(dimension, x, y);
-				recv.loaded.remove(new SIITuple(dimension, x, y));
+				scm.unload(dimension, x, z);
+				recv.loaded.remove(new SIITuple(dimension, x, z));
 				return;
 			}
-			recv.loaded.add(new SIITuple(dimension, x, y));
-			chk = scm.load(dimension, x, y);
+			recv.loaded.add(new SIITuple(dimension, x, z));
+			chk = scm.load(dimension, x, z);
 			recv.send(this);
 		} else {
 			ChunkManager.manager.changeDimension(dimension);
-			if(ChunkManager.manager.offerChunk(dimension, x, y, chk)) {
+			if(ChunkManager.manager.offerChunk(dimension, x, z, chk)) {
 				ChunkManager.manager.onLoad.accept(chk);
 			}
 		}

@@ -16,8 +16,8 @@ public final class ServerChunkManager extends LocalChunkManager {
 			count.put(key, 1);
 		});
 	}
-	public Chunk unload(String dimension, int x, int y) {
-		SIITuple pair = new SIITuple(dimension, x, y);
+	public Chunk unload(String dimension, int x, int z) {
+		SIITuple pair = new SIITuple(dimension, x, z);
 		Chunk chk=loaded.get(pair);
 		count.compute(pair, (k, v) -> {
 			if (v == null) {
@@ -25,7 +25,7 @@ public final class ServerChunkManager extends LocalChunkManager {
 			}
 			--v;
 			if (v == 0) {
-				super.unload(dimension, x, y);
+				super.unload(dimension, x, z);
 				return null;
 			}
 			return v;
@@ -33,9 +33,9 @@ public final class ServerChunkManager extends LocalChunkManager {
 		return chk;
 	}
 	@Override
-	public Chunk load(String dimension, int x, int y) {
-		SIITuple pair = new SIITuple(dimension, x, y);
-		Chunk chunk=super.load(dimension, x, y);
+	public Chunk load(String dimension, int x, int z) {
+		SIITuple pair = new SIITuple(dimension, x, z);
+		Chunk chunk=super.load(dimension, x, z);
 		count.compute(pair, (k, v) -> {
 			if (v == null) {
 				return 1;

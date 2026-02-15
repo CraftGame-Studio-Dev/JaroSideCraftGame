@@ -4,12 +4,12 @@ import java.io.*;
 import java.nio.FloatBuffer;
 import io.github.javaherobrine.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL45.*;
 import xueli.utils.io.*;
 import org.joml.*;
 import org.lwjgl.system.MemoryUtil;
 public class Renderer implements RunnableLifeCycle {
+	public static Renderer renderer;
 	private Window win;
 	private long frame = -1;
 	private Shader shader;
@@ -30,6 +30,15 @@ public class Renderer implements RunnableLifeCycle {
 			Texture.error0()
 			};
 	private VAO vao;
+	/**
+	 * Indices:
+	 * 0: block
+	 * 1: light source
+	 * 2: sky
+	 * 3: HUD
+	 * 4: particles
+	 */
+	public final RenderQueue[] queues=new RenderQueue[5];
 	public Renderer(Window window) {
 		modelAddr=GameUtils.address(model);
 		projectionAddr=GameUtils.address(projection);
