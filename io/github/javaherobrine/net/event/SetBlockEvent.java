@@ -11,7 +11,7 @@ public class SetBlockEvent extends EventContent implements Consumer<Chunk> {
 	private Block block;
 	@Override
 	public void recvExec(boolean serverside) throws Exception {
-		ChunkManager.manager.forLoadedOrCached(block.dimension, block.x>>2, block.z>>2, this);
+		ChunkManager.manager.forLoadedOrCached(block.dimension, block.x>>4, block.z>>4, this);
 		if(serverside) {
 			((ServerSideClientImpl)recver).s.sendAll(this);
 		}

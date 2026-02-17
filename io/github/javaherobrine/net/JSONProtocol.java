@@ -10,11 +10,14 @@ public class JSONProtocol extends Protocol {
 	}
 	private JSONReader reader;
 	private JSONWriter writer;
+	private MultiInflaterInputStream input;
+	private MultiDeflaterOutputStream output;
 	@SuppressWarnings("unchecked")
 	@Override
 	public EventContent next() {
 		if (hasNext()) {
 			try {
+				input.finish();
 				HashMap<String, Object> map = (HashMap<String, Object>) reader.nextObject();
 				EventContent ec = (EventContent) ((EventContent) TrieNode.REGISTRY.access((String) map.get("type")))
 						.clone();
@@ -29,6 +32,7 @@ public class JSONProtocol extends Protocol {
 	@Override
 	public void send(EventContent ec) throws IOException {
 		writer.writeObject(ec);
+		output.finish();
 	}
 	@Override
 	public Protocol clone() {
@@ -43,7 +47,9 @@ public class JSONProtocol extends Protocol {
 	@SuppressWarnings("resource")
 	@Override
 	public void setSocket(Socket soc) throws IOException {
-		reader = new JSONReader(soc.getInputStream());
-		writer = new JSONWriter(soc.getOutputStream());
+		input = new MultiInflaterInputStream(soc.getInputStream());
+		output = new MultiDeflaterOutputStream(soc.getOutputStream());
+		reader = new JSONReader(input);
+		writer = new JSONWriter(output);
 	}
 }
