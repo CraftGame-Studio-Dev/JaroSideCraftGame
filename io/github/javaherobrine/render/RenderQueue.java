@@ -2,6 +2,7 @@ package io.github.javaherobrine.render;
 public class RenderQueue implements Renderable{
 	LinkedList internal=new LinkedList();
 	private Shader shader;
+	Runnable before;
 	public static class LinkedListNode{
 		public Renderable renderable;
 		private LinkedListNode prev,next;
@@ -11,6 +12,7 @@ public class RenderQueue implements Renderable{
 			LinkedListNode next=this.next;
 			this.next=null;
 			this.prev=null;
+			renderable=null;//for GC
 			return next;
 		}
 		public synchronized void link(LinkedListNode t0) {
@@ -32,6 +34,7 @@ public class RenderQueue implements Renderable{
 	@Override
 	public void render(Renderer renderer) {
 		shader.exec();
+		before.run();
 		LinkedListNode nil=internal.NIL;
 		nil=nil.next;
 		while(nil!=internal.NIL) {

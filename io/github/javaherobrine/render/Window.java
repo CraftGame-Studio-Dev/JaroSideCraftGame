@@ -3,11 +3,16 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL45.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
+import io.github.javaherobrine.AbstractEvent;
+import io.github.javaherobrine.GameUtils;
 import io.github.javaherobrine.math.*;
 import io.github.javaherobrine.render.input.*;
 import xueli.game2.lifecycle.*;
 import xueli.utils.exception.*;
 import java.util.function.*;
+import javax.imageio.*;
+import java.io.*;
+import java.awt.image.*;
 import org.joml.Math;
 import org.joml.*;
 public class Window implements LifeCycle {
@@ -105,6 +110,41 @@ public class Window implements LifeCycle {
 				fov=120;
 			}
 			projection=MatrixHelper.perspective(width, height, fov,0.1f,1000);
+		}));
+		game.add(new KeyBinding(GLFW_KEY_F2,-1,true,"",l->{
+			File f=new File(Long.toString(System.nanoTime())+".png");
+			try {
+				FileOutputStream fout=new FileOutputStream(f);
+				int data[]=new int[width*height];
+				glReadPixels(0,0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+				BufferedImage img=new BufferedImage(width,height,BufferedImage.TYPE_4BYTE_ABGR);
+				GameUtils.EDT.put(new AbstractEvent(){
+					@Override
+					public void process() throws Exception {
+						for(int i=0;i<data.length;++i) {
+							int temp = data[i];
+							temp &= 0xFF00FF00;
+							temp |= (data[i] & 0xFF) << 16;
+							temp |= (data[i] >> 16) & 0xFF;
+							data[i] = temp;
+						}
+						for(int i=0;i<(height)>>1;++i) {
+							for(int j=0;j<width;++j) {
+								int p=i*width+j,q=(height-i-1)*width+j;
+								data[p]^=data[q];
+								data[q]^=data[p];
+								data[p]^=data[q];
+							}
+						}
+						img.setRGB(0,0,width,height,data,0,width);
+						ImageIO.write(img,"png", fout);
+						fout.close();
+						System.err.println("[Info] Screenshot is stored in "+f.getAbsolutePath());
+					}
+				});
+			} catch (FileNotFoundException e) {
+				return;
+			}
 		}));
 		game.mouse=()->{
 			glfwSetWindowTitle(window,"CraftGame Position="+"("+(long)camera.x+","+(long)camera.y+","+(long)camera.z+")");

@@ -1,10 +1,11 @@
 package io.github.javaherobrine.net;
 import java.io.IOException;
 import java.net.Socket;
+import io.github.javaherobrine.GameUtils;
 public class ServerImpl extends Server<String> {
 	public Protocol protocol;
 	public ServerImpl(int port, Protocol p) throws IOException {
-		super(port);
+		super(port,GameUtils.EDT);
 		protocol = p;
 	}
 	@Override

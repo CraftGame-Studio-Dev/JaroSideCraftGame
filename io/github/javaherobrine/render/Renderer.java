@@ -12,7 +12,7 @@ public class Renderer implements RunnableLifeCycle {
 	public static Renderer renderer;
 	private Window win;
 	private long frame = -1;
-	private Shader shader;
+	private Shader block;
 	private Shader sky;
 	private Shader lightSource;
 	public final FloatBuffer model=MemoryUtil.memAllocFloat(16);
@@ -28,7 +28,7 @@ public class Renderer implements RunnableLifeCycle {
 			Texture.create(Files.getResourcePackedInJarStream("/textures/andesite.png")),
 			Texture.create(Files.getResourcePackedInJarStream("/textures/grassblock.png")),
 			Texture.error0()
-			};
+	};
 	private VAO vao;
 	/**
 	 * Indices:
@@ -39,11 +39,27 @@ public class Renderer implements RunnableLifeCycle {
 	 * 4: particles
 	 */
 	public final RenderQueue[] queues=new RenderQueue[5];
+	{
+		for(int i=0;i<queues.length;++i) {
+			queues[i]=new RenderQueue();
+		}
+	}
 	public Renderer(Window window) {
 		modelAddr=GameUtils.address(model);
 		projectionAddr=GameUtils.address(projection);
 		lookAtAddr=GameUtils.address(lookAt);
 		GameUtils.makeIdentity(modelAddr);
+//		queues[0].before=()->{
+//			block.uniform(1,win.camera.lookAt(),lookAt);
+//			block.uniform(2,win.projection,projection);
+//		};
+//		queues[1].before=()->{
+//			lightSource.uniform(1,win.camera.lookAt(),lookAt);
+//			lightSource.uniform(2,win.projection,projection);
+//		};
+//		queues[2].before=()->{
+//			
+//		};
 		win = window;
 		vao=VAO.blockVAO(VAO.NO_ATLAS_COORDINATE,GL_STATIC_DRAW);
 		vao.bindVBO(GL_STATIC_DRAW);
@@ -52,9 +68,8 @@ public class Renderer implements RunnableLifeCycle {
 	@Override
 	public void init() {
 		try {
-			shader = new Shader(Files.getResourcePackedInJarStream("/shaders/block/block.vs").readAllBytes(),
+			block = new Shader(Files.getResourcePackedInJarStream("/shaders/block/block.vs").readAllBytes(),
 					Files.getResourcePackedInJarStream("/shaders/block/block.fs").readAllBytes());
-			shader.exec();
 			lightSource=new Shader(Files.getResourcePackedInJarStream("/shaders/block/lightSource.vs").readAllBytes(),
 					Files.getResourcePackedInJarStream("/shaders/block/lightSource.fs").readAllBytes());
 			sky=new Shader(Files.getResourcePackedInJarStream("/shaders/sky/vertex.vs").readAllBytes(),
@@ -76,25 +91,25 @@ public class Renderer implements RunnableLifeCycle {
 		win.input(deltaTime);
 		// render
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		shader.exec();
+		block.exec();
 		vao.bind();
 		vao.attribute(0, 3).attribute(1,2,3).attribute(2,3,5);
-		shader.uniform(1,win.camera.lookAt(),lookAt);
-		shader.uniform(2, win.projection);
+		block.uniform(1,win.camera.lookAt(),lookAt);
+		block.uniform(2, win.projection);
 		for(int i=0;i<7;++i) {
-			shader.uniform(3+i,i);
+			block.uniform(3+i,i);
 		}
 		for(int i=0;i<4;++i) {
 			for(int j=0;j<6;++j) {
 				loaded[i].activate(j);
 			}
 			for(int j=0;j<11;++j) {
-				shader.uniform(0,new Matrix4f().translate(i, 0, j),model);
+				block.uniform(0,new Matrix4f().translate(i, 0, j),model);
 				Constant.BREAKING_BLOCKS[j].activate(6);
 				vao.apply();
 			}
 		}
-		shader.uniform(10,0.2f,0.05f,0.2f);
+		block.uniform(10,0.2f,0.05f,0.2f);
 		lightSource.exec();
 		vao.bind();
 		vao.attribute(0, 3).attribute(1,2,3).attribute(2,3,5);
@@ -116,7 +131,7 @@ public class Renderer implements RunnableLifeCycle {
 		sky.exec();
 		skyVAO.bind();
 		skyVAO.attribute(0,3);
-		sky.uniform(0,new Matrix4f(),model);
+		//sky.uniform(0,new Matrix4f(),model);
 		GameUtils.to3x3(lookAt);
 		glUniformMatrix4fv(1, false, lookAt);
 		sky.uniform(2,win.projection,projection);

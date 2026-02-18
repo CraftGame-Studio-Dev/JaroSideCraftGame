@@ -10,6 +10,7 @@ import org.lwjgl.system.NativeType;
 import java.lang.invoke.*;
 public final class GameUtils {
 	private static final MethodHandle handle;
+	public static final EventDispatchThread EDT=new EventDispatchThread();
 	static {
 		MethodHandle h;
 		try {
@@ -23,6 +24,7 @@ public final class GameUtils {
 		handle=h;
 		System.load("/home/javaherobrine/libJNI.so");
 		supportsNIOAccess(ByteBuffer.allocateDirect(0));
+		EDT.start();
 	}
 	public static final Random GENERATOR = new Random();
 	private GameUtils() {
