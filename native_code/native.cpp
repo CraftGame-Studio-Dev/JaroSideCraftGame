@@ -1,4 +1,5 @@
 #include"io_github_javaherobrine_GameUtils.h"
+#include<cstring>
 jfieldID addressID;
 void* (*func)(JNIEnv*&,jobject&);
 void* getAddress(JNIEnv*& env,jobject& direct){

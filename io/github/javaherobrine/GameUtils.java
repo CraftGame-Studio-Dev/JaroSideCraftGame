@@ -107,6 +107,14 @@ public final class GameUtils {
 		res.flip();
 		return res;
 	}
+	/*
+	 * _____________________
+	 * |                    |
+	 * | Warning: JNI here  |
+	 * |     Danger Zone    |
+	 * |                    |
+	 * |____________________|
+	 */
 	/**
 	 * Manipulate the memory directly to increase the performance
 	 * It will block GC

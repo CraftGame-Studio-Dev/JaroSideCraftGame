@@ -49,17 +49,17 @@ public class Renderer implements RunnableLifeCycle {
 		projectionAddr=GameUtils.address(projection);
 		lookAtAddr=GameUtils.address(lookAt);
 		GameUtils.makeIdentity(modelAddr);
-//		queues[0].before=()->{
-//			block.uniform(1,win.camera.lookAt(),lookAt);
-//			block.uniform(2,win.projection,projection);
-//		};
-//		queues[1].before=()->{
-//			lightSource.uniform(1,win.camera.lookAt(),lookAt);
-//			lightSource.uniform(2,win.projection,projection);
-//		};
-//		queues[2].before=()->{
-//			
-//		};
+		queues[0].before=()->{
+			block.uniform(1,win.camera.lookAt(),lookAt);
+			block.uniform(2,win.projection,projection);
+		};
+		queues[1].before=()->{
+			lightSource.uniform(1,win.camera.lookAt(),lookAt);
+			lightSource.uniform(2,win.projection,projection);
+		};
+		queues[2].before=()->{
+			
+		};
 		win = window;
 		vao=VAO.blockVAO(VAO.NO_ATLAS_COORDINATE,GL_STATIC_DRAW);
 		vao.bindVBO(GL_STATIC_DRAW);

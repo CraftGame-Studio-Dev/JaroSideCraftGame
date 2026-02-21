@@ -69,7 +69,8 @@ public sealed abstract class ChunkManager permits LocalChunkManager, NetworkChun
 			loaded.put(new SIITuple(dimension, x, z), chk);
 			return true;
 		}else if(buffered.containsKey(tuple)){
-			buffered.get(tuple).refersTo(chk);
+			buffered.put(tuple,new WeakReference<>(chk));
+			return true;
 		}
 		return false;
 	}

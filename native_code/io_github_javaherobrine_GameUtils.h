@@ -14,22 +14,71 @@ extern "C" {
  */
 JNIEXPORT jlong JNICALL Java_io_github_javaherobrine_GameUtils_address___3B
   (JNIEnv *, jclass, jbyteArray);
+
+/*
+ * Class:     io_github_javaherobrine_GameUtils
+ * Method:    allowGC
+ * Signature: (J[B)V
+ */
 JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_allowGC
   (JNIEnv *, jclass, jlong, jbyteArray);
+
+/*
+ * Class:     io_github_javaherobrine_GameUtils
+ * Method:    supportsNIOAccess
+ * Signature: (Ljava/nio/ByteBuffer;)V
+ */
 JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_supportsNIOAccess
   (JNIEnv *, jclass, jobject);
+
+/*
+ * Class:     io_github_javaherobrine_GameUtils
+ * Method:    to3x3
+ * Signature: (Ljava/nio/FloatBuffer;)V
+ */
 JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_to3x3
   (JNIEnv *, jclass, jobject);
+
+/*
+ * Class:     io_github_javaherobrine_GameUtils
+ * Method:    pointerOfPointer
+ * Signature: ([J)J
+ */
 JNIEXPORT jlong JNICALL Java_io_github_javaherobrine_GameUtils_pointerOfPointer
   (JNIEnv *, jclass, jlongArray);
+
+/*
+ * Class:     io_github_javaherobrine_GameUtils
+ * Method:    freePointerOfPointer
+ * Signature: (J[J)V
+ */
 JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_freePointerOfPointer
   (JNIEnv *, jclass, jlong, jlongArray);
+
+/*
+ * Class:     io_github_javaherobrine_GameUtils
+ * Method:    modelMatrix
+ * Signature: (JFFF)V
+ */
 JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_modelMatrix
   (JNIEnv *, jclass, jlong, jfloat, jfloat, jfloat);
+
+/*
+ * Class:     io_github_javaherobrine_GameUtils
+ * Method:    address
+ * Signature: (Ljava/nio/Buffer;)J
+ */
 JNIEXPORT jlong JNICALL Java_io_github_javaherobrine_GameUtils_address__Ljava_nio_Buffer_2
   (JNIEnv *, jclass, jobject);
+
+/*
+ * Class:     io_github_javaherobrine_GameUtils
+ * Method:    makeIdentity
+ * Signature: (J)V
+ */
 JNIEXPORT void JNICALL Java_io_github_javaherobrine_GameUtils_makeIdentity
   (JNIEnv *, jclass, jlong);
+
 #ifdef __cplusplus
 }
 #endif
