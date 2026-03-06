@@ -33,12 +33,17 @@ public class CrashReport {
 			builder.append(t.getClass().getName());
 			if (t.getMessage() != null && !t.getMessage().isBlank()) builder.append(": ").append(t.getMessage());
 			StackTraceElement[] es = t.getStackTrace();
-			for (int i = 0; i < Math.min(es.length, 4); i++) {
+			for (int i = 0; i < es.length; i++) {
 				StackTraceElement element = es[i];
 				builder.append(System.lineSeparator());
 				builder.append("    ").append(element.getClassName()).append(":").append(element.getMethodName())
-						.append("(").append(element.getFileName()).append(":").append(element.getLineNumber())
-						.append(")");
+						.append("(");
+				if(element.isNativeMethod()) {
+					builder.append("Native Method");
+				}else {
+					builder.append(element.getFileName()).append(":").append(element.getLineNumber());
+				}
+				builder.append(')');
 			}
 			builder.append(System.lineSeparator());
 			t = t.getCause();
