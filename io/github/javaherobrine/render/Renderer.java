@@ -21,13 +21,13 @@ public class Renderer implements RunnableLifeCycle {
 	public final long modelAddr;
 	public final long projectionAddr;
 	public final long lookAtAddr;
-	private Texture skyTexture=Texture.sky();
+	private TextureAtlas skyTexture=TextureAtlas.sky();
 	private VAO skyVAO=VAO.skyVAO();
 	private Texture[] loaded= {
 			Constant.INVALID_TEXTURE_HARD_CODING,
-			Texture.create(Files.getResourcePackedInJarStream("/textures/andesite.png")),
-			Texture.create(Files.getResourcePackedInJarStream("/textures/grassblock.png")),
-			Texture.error0()
+			TextureAtlas.create(Files.getResourcePackedInJarStream("/textures/andesite.png")),
+			TextureAtlas.create(Files.getResourcePackedInJarStream("/textures/grassblock.png")),
+			TextureAtlas.error0()
 	};
 	private VAO vao;
 	/**
@@ -61,7 +61,7 @@ public class Renderer implements RunnableLifeCycle {
 			
 		};
 		win = window;
-		vao=VAO.blockVAO(VAO.NO_ATLAS_COORDINATE,GL_STATIC_DRAW);
+		vao=VAO.blockVAO(null,null,null,null,null,null,GL_STATIC_DRAW);
 		vao.bindVBO(GL_STATIC_DRAW);
 		skyVAO.bindVBO(GL_STATIC_DRAW);
 	}

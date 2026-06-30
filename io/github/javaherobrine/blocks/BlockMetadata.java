@@ -4,16 +4,16 @@ import io.github.javaherobrine.*;
 import io.github.javaherobrine.format.*;
 import java.io.*;
 import xueli.registry.*;
-public class BlockPrototype implements JSONString, Serializable{
+public class BlockMetadata implements JSONString, Serializable{
 	private static final long serialVersionUID = 1L;
 	public transient Texture up,down,left,right,front,end;
 	public final String ID;
 	public boolean isLightSource;
 	public boolean isTransparent;
 	public VAO vao;
-	public BlockPrototype(String ID) {
+	public BlockMetadata(String ID) {
 		this.ID=ID;
-		TrieNode.REGISTRY.put(new Identifier("block_prototype",ID), this);
+		TrieNode.REGISTRY.put(new Identifier("block_metadata",ID), this);
 	}
 	@Override
 	public void valueOf(String value) {}//Singleton, so unused
@@ -21,5 +21,5 @@ public class BlockPrototype implements JSONString, Serializable{
 	public String toString() {
 		return ID;
 	}
-	public static final BlockPrototype AIR=new BlockPrototype("craftgame:air");
+	public static final BlockMetadata AIR=new BlockMetadata("craftgame:air");
 }

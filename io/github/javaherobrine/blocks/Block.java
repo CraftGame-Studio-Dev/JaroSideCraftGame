@@ -10,7 +10,7 @@ import io.github.javaherobrine.render.*;
 import xueli.registry.*;
 public class Block implements JSONSerializable, Serializable, Renderable{
 	private static final long serialVersionUID = 1L;
-	public BlockPrototype prototype;
+	public BlockMetadata prototype;
 	public String dimension;
 	public RenderQueue.LinkedListNode node;
 	public int x,y,z;
@@ -30,7 +30,7 @@ public class Block implements JSONSerializable, Serializable, Renderable{
 		x=((BigInteger)input.get("x")).intValue();
 		y=((BigInteger)input.get("y")).intValue();
 		z=((BigInteger)input.get("z")).intValue();
-		prototype=(BlockPrototype)TrieNode.REGISTRY.access(new Identifier("prototype",(String)input.get("block_prototype")));
+		prototype=(BlockMetadata)TrieNode.REGISTRY.access(new Identifier("prototype",(String)input.get("block_prototype")));
 	}
 	@Override
 	public void render(Renderer renderer) {

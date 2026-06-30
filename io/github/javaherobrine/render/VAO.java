@@ -72,44 +72,38 @@ public class VAO {// compact data
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	}
 	/**
-	 * texture coordinates order:
-	 * up left x
-	 * up left y
-	 * down right x
-	 * down right y
-	 * (in all faces)
 	 * face order:
 	 * up down left right front back
 	 * Warning: No checks
 	 * content: [coordinate(3 floats)][texture coordinate(2 floats)][normal vector(3 floats)]
 	 * @return VAO
 	 */
-	public static VAO blockVAO(float textureCoord[],int mode) {
+	public static VAO blockVAO(Texture up,Texture down,Texture left,Texture right,Texture front,Texture back,int mode) {
 		VAO vao=new VAO(new float[] {
-				0,0.99999f,0,textureCoord[0],textureCoord[1],0,1,0,
-				0.99999f,0.99999f,0.99999f,textureCoord[2],textureCoord[3],0,1,0,
-				0,0.99999f,0.99999f,textureCoord[0],textureCoord[3],0,1,0,
-				0.99999f,0.99999f,0,textureCoord[2],textureCoord[1],0,1,0,
-				0,0,0.99999f,textureCoord[4],textureCoord[5],0,-1,0,
-				0.99999f,0,0,textureCoord[6],textureCoord[7],0,-1,0,
-				0,0,0,textureCoord[4],textureCoord[7],0,-1,0,
-				0.99999f,0,0.99999f,textureCoord[6],textureCoord[5],0,-1,0,
-				0,0.99999f,0,textureCoord[8],textureCoord[9],-1,0,0,
-				0,0,0.99999f,textureCoord[10],textureCoord[11],-1,0,0,
-				0,0,0,textureCoord[8],textureCoord[11],-1,0,0,
-				0,0.99999f,0.99999f,textureCoord[10],textureCoord[9],-1,0,0,
-				0.99999f,0.99999f,0.99999f,textureCoord[12],textureCoord[13],1,0,0,
-				0.99999f,0,0,textureCoord[14],textureCoord[15],1,0,0,
-				0.99999f,0,0.99999f,textureCoord[12],textureCoord[15],1,0,0,
-				0.99999f,0.99999f,0,textureCoord[14],textureCoord[13],1,0,0,
-				0,0.99999f,0.99999f,textureCoord[16],textureCoord[17],0,0,1,
-				0.99999f,0,0.99999f,textureCoord[18],textureCoord[19],0,0,1,
-				0,0,0.99999f,textureCoord[16],textureCoord[19],0,0,1,
-				0.99999f,0.99999f,0.99999f,textureCoord[18],textureCoord[17],0,0,1,
-				0.99999f,0.99999f,0,textureCoord[20],textureCoord[21],0,0,-1,
-				0,0,0,textureCoord[22],textureCoord[23],0,0,-1,
-				0.99999f,0,0,textureCoord[20],textureCoord[23],0,0,-1,
-				0,0.99999f,0,textureCoord[22],textureCoord[21],0,0,-1
+				0,0.99999f,0,up.ulx(),up.uly(),0,1,0,
+				0.99999f,0.99999f,0.99999f,up.drx(),up.dry(),0,1,0,
+				0,0.99999f,0.99999f,up.ulx(),up.dry(),0,1,0,
+				0.99999f,0.99999f,0,up.drx(),up.uly(),0,1,0,
+				0,0,0.99999f,down.ulx(),down.uly(),0,-1,0,
+				0.99999f,0,0,down.drx(),down.dry(),0,-1,0,
+				0,0,0,down.ulx(),down.dry(),0,-1,0,
+				0.99999f,0,0.99999f,down.drx(),down.uly(),0,-1,0,
+				0,0.99999f,0,left.ulx(),left.uly(),-1,0,0,
+				0,0,0.99999f,left.drx(),left.dry(),-1,0,0,
+				0,0,0,left.ulx(),left.dry(),-1,0,0,
+				0,0.99999f,0.99999f,left.drx(),left.uly(),-1,0,0,
+				0.99999f,0.99999f,0.99999f,right.ulx(),right.uly(),1,0,0,
+				0.99999f,0,0,right.drx(),right.dry(),1,0,0,
+				0.99999f,0,0.99999f,right.ulx(),right.dry(),1,0,0,
+				0.99999f,0.99999f,0,right.drx(),right.uly(),1,0,0,
+				0,0.99999f,0.99999f,front.ulx(),front.uly(),0,0,1,
+				0.99999f,0,0.99999f,front.drx(),front.dry(),0,0,1,
+				0,0,0.99999f,front.ulx(),front.dry(),0,0,1,
+				0.99999f,0.99999f,0.99999f,front.drx(),front.uly(),0,0,1,
+				0.99999f,0.99999f,0,back.ulx(),back.uly(),0,0,-1,
+				0,0,0,back.drx(),back.dry(),0,0,-1,
+				0.99999f,0,0,back.ulx(),back.dry(),0,0,-1,
+				0,0.99999f,0,back.drx(),back.dry(),0,0,-1
 		},8);
 		vao.bindIBO(new byte[] {
 				0,1,2,

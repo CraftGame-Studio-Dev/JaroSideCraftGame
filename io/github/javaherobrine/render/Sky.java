@@ -1,6 +1,6 @@
 package io.github.javaherobrine.render;
 public class Sky implements Renderable{
-	public Texture texture;
+	public TextureAtlas texture;
 	private VAO skyVAO=VAO.skyVAO();
 	@Override
 	public void render(Renderer renderer) {

@@ -29,7 +29,7 @@ public class SetBlockEvent extends EventContent implements Consumer<Chunk> {
 	public void accept(Chunk t) {
 		int nX=block.x&0xF,nZ=block.z&0xF;
 		Block old=t.chunk[nX][block.y][nZ];
-		boolean air=block.prototype==BlockPrototype.AIR;
+		boolean air=block.prototype==BlockMetadata.AIR;
 		if(air) {
 			t.chunk[nX][block.y][nZ]=null;
 		}else {
