@@ -71,6 +71,17 @@ public class VAO {// compact data
 	public void bind() {
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	}
+	public void points() {
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		if(elements!=-1) {
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+			glDrawElements(GL_POINTS, elements, datatype, 0);
+		}else
+			points0();
+	}
+	private void points0() {
+		glDrawArrays(GL_POINTS,0,data.length/size);
+	}
 	/**
 	 * face order:
 	 * up down left right front back
@@ -103,7 +114,7 @@ public class VAO {// compact data
 				0.99999f,0.99999f,0,back.ulx(),back.uly(),0,0,-1,
 				0,0,0,back.drx(),back.dry(),0,0,-1,
 				0.99999f,0,0,back.ulx(),back.dry(),0,0,-1,
-				0,0.99999f,0,back.drx(),back.dry(),0,0,-1
+				0,0.99999f,0,back.drx(),back.uly(),0,0,-1
 		},8);
 		vao.bindIBO(new byte[] {
 				0,1,2,

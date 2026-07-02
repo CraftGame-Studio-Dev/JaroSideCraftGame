@@ -11,7 +11,7 @@ import org.lwjgl.system.MemoryUtil;
 public class Renderer implements RunnableLifeCycle {
 	public static Renderer renderer;
 	private Window win;
-	private long frame = -1;
+	public long frame = -1;
 	private Shader block;
 	private Shader sky;
 	private Shader lightSource;
@@ -61,19 +61,19 @@ public class Renderer implements RunnableLifeCycle {
 			
 		};
 		win = window;
-		vao=VAO.blockVAO(null,null,null,null,null,null,GL_STATIC_DRAW);
+		vao=VAO.blockVAO(Constant.INVALID_TEXTURE_HARD_CODING,Constant.INVALID_TEXTURE_HARD_CODING,Constant.INVALID_TEXTURE_HARD_CODING,Constant.INVALID_TEXTURE_HARD_CODING,Constant.INVALID_TEXTURE_HARD_CODING,Constant.INVALID_TEXTURE_HARD_CODING,GL_STATIC_DRAW);
 		vao.bindVBO(GL_STATIC_DRAW);
 		skyVAO.bindVBO(GL_STATIC_DRAW);
 	}
 	@Override
 	public void init() {
 		try {
-			block = new Shader(Files.getResourcePackedInJarStream("/shaders/block/block.vs").readAllBytes(),
-					Files.getResourcePackedInJarStream("/shaders/block/block.fs").readAllBytes());
-			lightSource=new Shader(Files.getResourcePackedInJarStream("/shaders/block/lightSource.vs").readAllBytes(),
-					Files.getResourcePackedInJarStream("/shaders/block/lightSource.fs").readAllBytes());
-			sky=new Shader(Files.getResourcePackedInJarStream("/shaders/sky/vertex.vs").readAllBytes(),
-					Files.getResourcePackedInJarStream("/shaders/sky/fragment.fs").readAllBytes());
+			block = new Shader(Files.getResourcePackedInJarStream("/shaders/block/block.vert").readAllBytes(),
+					Files.getResourcePackedInJarStream("/shaders/block/block.frag").readAllBytes());
+			lightSource=new Shader(Files.getResourcePackedInJarStream("/shaders/block/lightSource.vert").readAllBytes(),
+					Files.getResourcePackedInJarStream("/shaders/block/lightSource.frag").readAllBytes());
+			sky=new Shader(Files.getResourcePackedInJarStream("/shaders/sky/vertex.vert").readAllBytes(),
+					Files.getResourcePackedInJarStream("/shaders/sky/fragment.frag").readAllBytes());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

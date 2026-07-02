@@ -20,39 +20,29 @@ public class TextureAtlas {
 		this.width=width[0];
 		this.height=height[0];
 		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width[0], height[0], 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width[0], height[0], 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		nstbi_image_free(buf);
 	}
 	/*
-	 * @throws IOException: If can't create texture from given file
+	 * @throws IOException: If can't create texture from given stream
 	 */
 	public TextureAtlas(InputStream in) throws IOException {
 		textureID = glGenTextures();
 		glBindTexture(GL_TEXTURE_2D, textureID);
 		BufferedImage img = ImageIO.read(in);
-		System.err.println(img.getType());
 		int[] data = new int[img.getWidth() * img.getHeight()];
 		img.getRGB(0, 0, img.getWidth(), img.getHeight(), data, 0, img.getWidth());
-		for (int i = 0; i < data.length; ++i) {
-			int temp = data[i];
-			temp &= 0xFF00FF00;
-			temp |= (data[i] & 0xFF) << 16;
-			temp |= (data[i] >> 16) & 0xFF;
-			data[i] = temp;
-		}
 		this.width=img.getWidth();
 		this.height=img.getHeight();
-		glGenerateMipmap(GL_TEXTURE_2D);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getWidth(), img.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, img.getWidth(), img.getHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
 	}
 	private TextureAtlas(int target,int w,int h) {
 		width=w;
@@ -112,7 +102,6 @@ public class TextureAtlas {
 		Texture text = new Texture(new TextureAtlas(GL_TEXTURE_2D,2,2),0,0,1,1);
 		int data[] = { 0xFFF800F8,0xFF000000,0xFF000000,0xFFF800F8};//Hard coding
 		glGenerateMipmap(GL_TEXTURE_2D);
-	//	int data[] = {0xFFF800F8,0xFF000000,0xFF000000,0xFFF800F8};//Hard coding
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

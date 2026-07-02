@@ -2,6 +2,7 @@ package io.github.javaherobrine.blocks;
 import io.github.javaherobrine.render.*;
 import io.github.javaherobrine.*;
 import io.github.javaherobrine.format.*;
+import static org.lwjgl.opengl.GL45.*;
 import java.io.*;
 import xueli.registry.*;
 public class BlockMetadata implements JSONString, Serializable{
@@ -14,6 +15,9 @@ public class BlockMetadata implements JSONString, Serializable{
 	public BlockMetadata(String ID) {
 		this.ID=ID;
 		TrieNode.REGISTRY.put(new Identifier("block_metadata",ID), this);
+	}
+	public void init() {
+		vao=VAO.blockVAO(up, down, left, right, front, down, GL_STATIC_DRAW);
 	}
 	@Override
 	public void valueOf(String value) {}//Singleton, so unused
