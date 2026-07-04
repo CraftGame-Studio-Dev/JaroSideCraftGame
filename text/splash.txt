@@ -15,3 +15,6 @@ Co+2Fe=COFFEE(condition: ZMY/Sb)
 Subscribe CraftGame Studio >v<
 Why did MacOS refuse to support OpenGL 4.6?
 What about compiling CraftGame to x86 Assembly?
+Right abstraction, Right implementation!
+sudo pkill -9 javaherobrine
+:-)
