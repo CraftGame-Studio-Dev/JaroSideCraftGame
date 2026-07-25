@@ -17,4 +17,5 @@ public class Constant {// Declare constants
 		TextureAtlas.create(Files.getResourcePackedInJarStream("/textures/status/destroy_stage_8.png")),
 		TextureAtlas.create(Files.getResourcePackedInJarStream("/textures/status/destroy_stage_9.png"))
 	};
+	public static final boolean DEBUG=true;
 }

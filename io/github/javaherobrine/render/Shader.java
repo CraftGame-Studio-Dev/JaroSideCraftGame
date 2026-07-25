@@ -5,24 +5,44 @@ import java.nio.*;
 import org.lwjgl.opengl.GL45C;
 import org.lwjgl.system.*;
 import io.github.javaherobrine.*;
+import io.github.javaherobrine.debug.*;
 public class Shader {
 	public final int program, vertex, fragment;
 	public Shader(String vertexCode, String fragmentCode) {
-		System.err.println("vs: " + vertexCode);
-		System.err.println("fs: " + fragmentCode);
-		program = glCreateProgram();
 		vertex = glCreateShader(GL_VERTEX_SHADER);
-		fragment = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(fragment, fragmentCode);
 		glShaderSource(vertex, vertexCode);
 		glCompileShader(vertex);
-		System.err.println(glGetShaderInfoLog(vertex));
+		if(Constant.DEBUG) {
+			int success=glGetShaderi(vertex, GL_COMPILE_STATUS);
+			if(success==0) {
+				glDeleteShader(vertex);
+				throw new GLSLCompilationError(glGetShaderInfoLog(vertex));
+			}
+		}
+		fragment = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(fragment, fragmentCode);
 		glCompileShader(fragment);
-		System.err.println(glGetShaderInfoLog(fragment));
+		if(Constant.DEBUG) {
+			int success=glGetShaderi(fragment, GL_COMPILE_STATUS);
+			if(success==0) {
+				glDeleteShader(vertex);
+				glDeleteShader(fragment);
+				throw new GLSLCompilationError(glGetShaderInfoLog(fragment));
+			}
+		}
+		program = glCreateProgram();
 		glAttachShader(program, vertex);
 		glAttachShader(program, fragment);
 		glLinkProgram(program);
-		System.err.println(glGetProgramInfoLog(program));
+		if(Constant.DEBUG) {
+			int success=glGetProgrami(program, GL_LINK_STATUS);
+			if(success==0) {
+				glDeleteShader(vertex);
+				glDeleteShader(fragment);
+				glDeleteProgram(program);
+				throw new ShaderProgramLinkError(glGetProgramInfoLog(program));
+			}
+		}
 		glDeleteShader(fragment);
 		glDeleteShader(vertex);
 	}
@@ -35,7 +55,6 @@ public class Shader {
 		ptr[0]=GameUtils.address(fragmentCode);
 		ptr[1]=fragmentCode.length;
 		GL45C.nglShaderSource(fragment,1, addr,addr+8);
-		glCompileShader(fragment);
 		GameUtils.allowGC(ptr[0], fragmentCode);
 		ptr[0]=GameUtils.address(vertexCode);
 		ptr[1]=vertexCode.length;
@@ -43,13 +62,37 @@ public class Shader {
 		GameUtils.allowGC(ptr[0], vertexCode);
 		GameUtils.freePointerOfPointer(addr, ptr);
 		glCompileShader(vertex);
-		System.err.println(glGetShaderInfoLog(vertex));
+		if(Constant.DEBUG) {
+			int success=glGetShaderi(vertex, GL_COMPILE_STATUS);
+			if(success==0) {
+				glDeleteShader(vertex);
+				glDeleteShader(fragment);
+				glDeleteProgram(program);
+				throw new GLSLCompilationError(glGetProgramInfoLog(vertex));
+			}
+		}
 		glCompileShader(fragment);
-		System.err.println(glGetShaderInfoLog(fragment));
+		if(Constant.DEBUG) {
+			int success=glGetShaderi(fragment, GL_COMPILE_STATUS);
+			if(success==0) {
+				glDeleteShader(vertex);
+				glDeleteShader(fragment);
+				glDeleteProgram(program);
+				throw new GLSLCompilationError(glGetProgramInfoLog(fragment));
+			}
+		}
 		glAttachShader(program, vertex);
 		glAttachShader(program, fragment);
 		glLinkProgram(program);
-		System.err.println(glGetProgramInfoLog(program));
+		if(Constant.DEBUG) {
+			int success=glGetProgrami(program, GL_LINK_STATUS);
+			if(success==0) {
+				glDeleteShader(vertex);
+				glDeleteShader(fragment);
+				glDeleteProgram(program);
+				throw new ShaderProgramLinkError(glGetProgramInfoLog(program));
+			}
+		}
 		glDeleteShader(fragment);
 		glDeleteShader(vertex);
 	}

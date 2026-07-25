@@ -26,3 +26,6 @@ For `MacOS` users, maybe `MGL` must be installed before (To translate `OpenGL` t
 # See also
 - ~<a href="https://github.com/LovelyZeeiam/CraftGame">CraftGame from LovelyZeeiam</a>~(deleted)
 - <a href="https://github.com/LovelyZeeiam/JaroSideCraftGame">CraftGame from Java_Herobrine, with LovelyZeeiam's modifications</a>(maintenance changed temporarily)
+
+# Build
+Now maybe you are unable to build it. The minimal requirement is LWJGL 3.3.6 and Java 25. If you failed to build it 
