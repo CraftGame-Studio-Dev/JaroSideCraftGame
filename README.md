@@ -1,5 +1,7 @@
 # CraftGame, a free software, published under GNU AGPL v3.0 license
 ## Note:
+This repository lost its maintenance due to the maintainer itself. He or she will develop it again when his or her status are healthy. `LovelyZeeiam/CraftGame` is also affected as its maintainer is me currently. The maintenance is paused but not terminated.
+
 For `MacOS` users, maybe `MGL` must be installed before (To translate `OpenGL` to `Metal`), as the graphics card driver of `MacOS` only supports `OpenGL 4.1` or lower, but CraftGame Studio uses `OpenGL 4.5` here. Or you can also try `Zink` + `MoltenVK`.
 
 ## Current Tasks

@@ -16,17 +16,11 @@ public final class JSONFormatter {
 			case '\r':
 				sb.append("\\r");
 				break;
-			case ' ':
-				sb.append("\\s");
-				break;
 			case '\t':
 				sb.append("\\t");
 				break;
 			case '\\':
 				sb.append("\\\\");
-				break;
-			case '\'':
-				sb.append("\\\'");
 				break;
 			case '\"':
 				sb.append("\\\"");
